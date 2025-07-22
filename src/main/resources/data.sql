@@ -1,0 +1,15 @@
+INSERT INTO Demo (name, image, description) values ('One', 'https://via.placeholder.com/1024x640?text=One', 'Awesome demo here!');
+INSERT INTO Demo (name, image, description) values ('Two', 'https://via.placeholder.com/1024x640?text=Two', 'Awesome demo here!');
+INSERT INTO Demo (name, image, description) values ('Three', 'https://via.placeholder.com/1024x640?text=Three', 'Awesome demo here!');
+INSERT INTO Demo (name, image, description) values ('Four', 'https://via.placeholder.com/1024x640?text=Four', 'Awesome demo here!');
+INSERT INTO Demo (name, image, description) values ('Five', 'https://via.placeholder.com/1024x640?text=Five', 'Awesome demo here!');
+INSERT INTO Item (price, name, image, description) values (101000, 'One', 'https://via.placeholder.com/1024x640?text=One', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (102000, 'Two', 'https://via.placeholder.com/1024x640?text=Two', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (103000, 'Three', 'https://via.placeholder.com/1024x640?text=Three', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (104000, 'Four', 'https://via.placeholder.com/1024x640?text=Four', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (105000, 'Five', 'https://via.placeholder.com/1024x640?text=Five', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (106000, 'Six', 'https://via.placeholder.com/1024x640?text=Six', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (107000, 'Seven', 'https://via.placeholder.com/1024x640?text=Seven', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (108000, 'Eight', 'https://via.placeholder.com/1024x640?text=Eight', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (109000, 'Nine', 'https://via.placeholder.com/1024x640?text=Nine', 'Awesome item here!');
+INSERT INTO Item (price, name, image, description) values (110000, 'Ten', 'https://via.placeholder.com/1024x640?text=Ten', 'Awesome item here!');
