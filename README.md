@@ -2,7 +2,7 @@
 
 (진행중이며 임의 변경 및 삭제 될 수 있음)
 
-> 현재 JWT 기반 인증/인가 및 Redis, Kafka, RabbitMQ 연동, DB 읽기/쓰기 분리 구조를 적용중
+> 현재 JWT 기반 인증/인가 및 Redis, Kafka, RabbitMQ 연동, DB 읽기/쓰기 분리 구조를 적용 중입니다.
 
 ## 코드 구현 가이드
 
@@ -17,9 +17,9 @@ Model 에 따른 Mapper, Service 및 Controller 구현
   `com/cube/simple/dto/DemoRequest.java`,
   `com/cube/simple/dto/DemoResponse.java`
 
-* **Mapper 구현 예시**:
-  `resources/mapper/DemoMapper.xml`,
-  `com/cube/simple/mapper/DemoMapper.java`
+* **Mapper 구현 예시 (Read/Write DB 분리 구성)**:
+  `resources/mapper/*/*DemoMapper.xml`,
+  `com/cube/simple/mapper/*/*DemoMapper.java`
 
 * **Service 구현 예시**:
   `com/cube/simple/service/DemoService.java`
@@ -28,6 +28,87 @@ Model 에 따른 Mapper, Service 및 Controller 구현
   `com/cube/simple/controller/DemoController.java`
   (Swagger 관련 어노테이션 정보 구현필, 복붙 및 ChatGPT 활용하여 업데이트하면됨)
 
+## Read/Write DB 분리 구성
+
+본 프로젝트는 읽기(Read)와 쓰기(Write) 작업에 대해 분리된 DataSource 및 SqlSession을 구성합니다.
+
+### application.properties 예시:
+
+```properties
+# Read DB
+spring.datasource.read.jdbc-url=jdbc:h2:mem:testdb
+spring.datasource.read.username=sa
+spring.datasource.read.password=
+
+# Write DB
+spring.datasource.write.jdbc-url=jdbc:h2:mem:testdb
+spring.datasource.write.username=sa
+spring.datasource.write.password=
+```
+
+### Java 설정 클래스 예시:
+
+* `ReadDataSourceConfig.java` / `WriteDataSourceConfig.java`
+
+```java
+@Configuration
+@MapperScan(basePackages = "com.cube.simple.mapper.read", sqlSessionTemplateRef = "readSqlSessionTemplate")
+public class ReadDataSourceConfig {
+    @Bean(name = "readDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.read")
+    public DataSource readDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean(name = "readSqlSessionFactory")
+    public SqlSessionFactory readSqlSessionFactory(@Qualifier("readDataSource") DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setTypeAliasesPackage("com.cube.simple.model");
+        sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/read/*.xml"));
+        return sessionFactory.getObject();
+    }
+
+    @Bean(name = "readSqlSessionTemplate")
+    public SqlSessionTemplate readSqlSessionTemplate(@Qualifier("readSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+}
+```
+
+### Read/Write Mapper 인터페이스 분리:
+
+```java
+public interface DemoReadMapper {
+    Demo selectById(Long id);
+    List<Demo> selectAll();
+}
+
+public interface DemoWriteMapper {
+    int insertDemo(Demo demo);
+    int updateDemo(Demo demo);
+    int deleteById(Long id);
+}
+```
+
+### (개발자 테스트 및 데모용) DB 초기화 수동 처리:
+
+```java
+@Component
+@RequiredArgsConstructor
+public class DataInitializer {
+    private final DataSource writeDataSource;
+
+    @PostConstruct
+    public void initialize() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("schema.sql"));
+        populator.addScript(new ClassPathResource("data.sql"));
+        populator.execute(writeDataSource);
+    }
+}
+```
+
 ## REST API 규격서 가이드
 
 Controller 구현시 Swagger 관련 어노테이션 정보 구현하면 자동 반영됨
@@ -35,7 +116,7 @@ URL : `[API SERVER]/swagger-ui/index.html`
 
 ## 추가 개발 이슈
 
-* (필요시) `/api/v1/*`, `/api/v2/*` 등 버전 버전 관리 기능 반영
+* (필요시) `/api/v1/*`, `/api/v2/*` 등 버전 관리 기능 반영
 * 각종 Config, Filter, Interception 및 AOP 코드 구현 반영
 * `/mapper/read/*`, `/mapper/write/*` 등 RW 데이터베이스 분리 구성안 반영
 * Redis, Kafka, RabbitMQ 등 주요 리소스 활용을 위한 코드 구현 (대부분 공통 코드일거고 필요시 개별 비즈니스 로직을 위한 인터페이스 구현 예정)
@@ -99,8 +180,6 @@ deleteItem (Long {id})
 ```
 
 ## RESTful API 설계 시 자주 권장되는 명명(Naming) 규칙과 모범 사례 참고
-
----
 
 ### 1. 리소스(Resource) 명명
 
@@ -191,8 +270,6 @@ deleteItem (Long {id})
   ]
 }
 ```
-
----
 
 ### 참고자료
 

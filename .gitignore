@@ -1,4 +1,5 @@
 HELP.md
+README-편집용.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
