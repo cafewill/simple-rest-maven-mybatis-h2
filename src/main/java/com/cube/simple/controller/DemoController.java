@@ -18,7 +18,6 @@ import com.cube.simple.dto.DemoRequest;
 import com.cube.simple.dto.DemoResponse;
 import com.cube.simple.model.Demo;
 import com.cube.simple.service.DemoService;
-import com.cube.simple.service.ItemService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -254,7 +253,7 @@ public class DemoController {
                 response.setMessage(String.format("Delete error : no demo for id=%d", id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-            demoService.delete(id);
+            demoService.deleteById(id);
             response.setData(existing);
             response.setStatus(true);
             response.setMessage(String.format("Delete success : %s", existing));

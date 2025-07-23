@@ -253,7 +253,7 @@ public class ItemController {
                 response.setMessage(String.format("Delete error : no item for id=%d", id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-            itemService.delete(id);
+            itemService.deleteById(id);
             response.setData(existing);
             response.setStatus(true);
             response.setMessage(String.format("Delete success : %s", existing));

@@ -6,42 +6,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cube.simple.mapper.ItemMapper;
+import com.cube.simple.mapper.read.ReadItemMapper;
+import com.cube.simple.mapper.write.WriteItemMapper;
 import com.cube.simple.model.Item;
 
 @Service
 public class ItemService {
 
 	@Autowired
-	ItemMapper itemMapper;
+	ReadItemMapper readItemMapper;
 	
+	@Autowired
+	WriteItemMapper writeItemMapper;
+
 	@Transactional
 	public void insert (Item item) {
-		itemMapper.insert (item);
+		writeItemMapper.insert (item);
 	}
 
     @Transactional(readOnly = true)
 	public List <Item> selectAll () {
-		return itemMapper.selectAll ();
+		return readItemMapper.selectAll ();
 	}
 
     @Transactional(readOnly = true)
 	public Item selectById (Long id) {
-		return itemMapper.selectById (id);
+		return readItemMapper.selectById (id);
 	}
 	
     @Transactional(readOnly = true)
 	public Long selectCount () {
-		return itemMapper.selectCount ();
+		return readItemMapper.selectCount ();
 	}
 	
 	@Transactional
 	public void update (Item item) {
-		itemMapper.update (item);
+		writeItemMapper.update (item);
 	}
 
 	@Transactional
-	public void delete (Long id) {
-		itemMapper.delete (id);
+	public void deleteById (Long id) {
+		writeItemMapper.deleteById (id);
 	}
 }
