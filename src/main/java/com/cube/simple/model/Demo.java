@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Demo {
 	
-	Long id;
+	private Long id;
 	
     @NotBlank(message = "이름은 필수입니다.")
-	String name;
+    private String name;
 
-    String image;
-	String description;
+    private String image;
+    private String description;
 }

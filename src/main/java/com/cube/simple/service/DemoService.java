@@ -14,10 +14,10 @@ import com.cube.simple.model.Demo;
 public class DemoService {
 
 	@Autowired
-	ReadDemoMapper readDemoMapper;
+	private ReadDemoMapper readDemoMapper;
 	
 	@Autowired
-	WriteDemoMapper writeDemoMapper;
+	private WriteDemoMapper writeDemoMapper;
 
 	@Transactional
 	public void insert (Demo demo) {

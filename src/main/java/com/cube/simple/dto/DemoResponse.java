@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DemoResponse {
-	boolean status;
-	String message;
-	Object data;
+	private boolean status;
+	private String message;
+	private Object data;
 }

@@ -14,10 +14,10 @@ import com.cube.simple.model.Item;
 public class ItemService {
 
 	@Autowired
-	ReadItemMapper readItemMapper;
+	private ReadItemMapper readItemMapper;
 	
 	@Autowired
-	WriteItemMapper writeItemMapper;
+	private WriteItemMapper writeItemMapper;
 
 	@Transactional
 	public void insert (Item item) {

@@ -13,3 +13,12 @@ CREATE TABLE Item (
 	, image VARCHAR (255) NOT NULL
 	, description VARCHAR (255)
 );
+DROP TABLE IF EXISTS Member;
+CREATE TABLE Member (
+	seq IDENTITY PRIMARY KEY
+	, role VARCHAR (255) NOT NULL
+	, id VARCHAR (255) NOT NULL
+	, password VARCHAR (255) NOT NULL
+	, name VARCHAR (255) NOT NULL
+	, description VARCHAR (255)
+);
