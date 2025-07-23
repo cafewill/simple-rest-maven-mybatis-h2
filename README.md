@@ -2,6 +2,8 @@
 
 (진행중이며 임의 변경 및 삭제 될 수 있음)
 
+> 현재 JWT 기반 인증/인가 및 Redis, Kafka, RabbitMQ 연동, DB 읽기/쓰기 분리 구조를 적용중
+
 ## 코드 구현 가이드
 
 테이블 등 데이터 구성에 따른 Model 구현
@@ -29,7 +31,7 @@ Model 에 따른 Mapper, Service 및 Controller 구현
 ## REST API 규격서 가이드
 
 Controller 구현시 Swagger 관련 어노테이션 정보 구현하면 자동 반영됨
-URL : `[API SERVER]/swagger-ui/index.html#`
+URL : `[API SERVER]/swagger-ui/index.html`
 
 ## 추가 개발 이슈
 
