@@ -95,7 +95,6 @@ public interface DemoWriteMapper {
 
 ```java
 @Component
-@RequiredArgsConstructor
 public class DataInitializer {
     private final DataSource writeDataSource;
 
@@ -107,7 +106,67 @@ public class DataInitializer {
         populator.execute(writeDataSource);
     }
 }
+
+@Component
+public class MemberInitializer {
+
+    @Autowired
+    private WriteMemberMapper writeMemberMapper;
+
+    @PostConstruct
+    public void initUsers() {
+        writeMemberMapper.insert(Member.builder()
+            .role("ADMIN")
+            .id("admin")
+            .password(encrypt("8282"))
+            .name("관리자")
+            .description("모든 권한 관리자")
+            .build());
+        writeMemberMapper.insert(Member.builder()
+            .role("USER")
+            .id("jeju")
+            .password(encrypt("1234"))
+            .name("제주")
+            .description("일반 권한 사용자")
+            .build());
+    }
+
+    private String encrypt(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("암호화 실패", e);
+        }
+    }
+}
 ```
+
+### ✅ 사용자 계정 정보
+
+| 계정 구분 | ID    | PW   | 설명        |
+| ----- | ----- | ---- | --------- |
+| 관리자   | admin | 8282 | 모든 권한 관리자 |
+| 사용자   | jeju  | 1234 | 일반 권한 사용자 |
+
+### 🔐 API 접근 권한
+
+| API 경로         | 설명          | 인증 필요 | 권한     |
+| -------------- | ----------- | ----- | ------ |
+| `/api/demos`   | Demo 조회 (R) | ❌     | 전체 허용  |
+| `/api/items`   | Item 조회 (R) | ✅     | 사용자 이상 |
+| `/api/*` (CUD) | 생성, 수정, 삭제  | ✅     | 차단됨    |
+
+### 🔒 JWT 관련 정보
+
+* 유틸리티: `JwtUtil.java`
+* 필터: `JwtAuthenticationFilter.java`
+* 보안 설정: `SecurityConfig.java`
 
 ## REST API 규격서 가이드
 

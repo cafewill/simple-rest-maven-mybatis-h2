@@ -31,8 +31,11 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // 인증/인가 규칙
             .authorizeHttpRequests(auth -> auth
+        	    .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/demos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/items").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/items/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/members").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/members/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/demos/**", "/api/items/**", "/api/members/**").hasRole("ADMIN")

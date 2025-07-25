@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DemoRequest {
-	private Object data;
+public class DemoRequest <T> {
+	private T data;
 }

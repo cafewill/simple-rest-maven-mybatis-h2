@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonRequest {
-	private Object data;
+public class CommonRequest <T> {
+	private T data;
 }

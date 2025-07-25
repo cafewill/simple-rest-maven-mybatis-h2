@@ -1,12 +1,20 @@
 package com.cube.simple.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.CommonRequest;
 import com.cube.simple.dto.CommonResponse;
@@ -19,14 +27,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Tag(name = "Items", description = "아이템 CRUD API")
 @RestController
 @RequestMapping("/api/items")
+@SecurityRequirement(name = "JWT")
+@Tag(name = "Items", description = "아이템 CRUD API")
 public class ItemController {
     
     @Autowired
@@ -38,8 +47,8 @@ public class ItemController {
     /**
      * Create 권한: ADMIN만 가능
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "새 아이템 등록",
         description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 아이템을 저장합니다."
@@ -51,13 +60,12 @@ public class ItemController {
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<CommonResponse> insert(@RequestBody CommonRequest request) {
+    public ResponseEntity<?> insert(@RequestBody CommonRequest request) {
         CommonResponse response = CommonResponse.builder().build();
         try {
-            if (request != null && request.getData() != null) {
+            if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
                 Item candidate = objectMapper.convertValue(request.getData(), Item.class);
                 itemService.insert(candidate);
-
                 response.setData(candidate);
                 response.setStatus(true);
                 response.setMessage(String.format("Insert success : %s", candidate));
@@ -80,8 +88,8 @@ public class ItemController {
     /**
      * Read 권한: USER, ADMIN 가능
      */
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(summary = "모든 아이템 조회", description = "등록된 모든 아이템 목록을 반환합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -89,7 +97,7 @@ public class ItemController {
                 schema = @Schema(implementation = CommonResponse.class))),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<CommonResponse> selectAll() {
+    public ResponseEntity<?> selectAll() {
         CommonResponse response = CommonResponse.builder().build();
         try {
             List<Item> items = itemService.selectAll();
@@ -108,8 +116,8 @@ public class ItemController {
     /**
      * Read by ID 권한: USER, ADMIN 가능
      */
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(summary = "ID로 아이템 조회", description = "PathVariable로 전달된 ID의 아이템을 반환합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -119,16 +127,16 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "아이템 없음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<CommonResponse> selectById(@PathVariable Long id) {
+    public ResponseEntity<?> selectById(@PathVariable Long id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
-            if (id == null) {
+            if (Objects.isNull(id)) {
                 response.setStatus(false);
                 response.setMessage("Select error : id is null");
                 return ResponseEntity.badRequest().body(response);
             }
             Item item = itemService.selectById(id);
-            if (item != null) {
+            if (Objects.nonNull(item)) {
                 response.setData(item);
                 response.setStatus(true);
                 response.setMessage(String.format("Select success : %s", item));
@@ -149,8 +157,8 @@ public class ItemController {
     /**
      * Update 권한: ADMIN만 가능
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "아이템 수정",
         description = "PathVariable로 전달된 ID의 아이템을, RequestBody로 전달된 데이터로 수정합니다."
@@ -163,31 +171,31 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "아이템이 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<CommonResponse> update(
+    public ResponseEntity<?> update(
             @PathVariable Long id,
             @RequestBody CommonRequest request) {
 
         CommonResponse response = CommonResponse.builder().build();
         try {
-            if (id == null || request == null || request.getData() == null) {
+            if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
                 response.setStatus(false);
                 response.setMessage("Update error : invalid id or request");
                 return ResponseEntity.badRequest().body(response);
             }
-            Item existing = itemService.selectById(id);
-            if (existing == null) {
+            Item found = itemService.selectById(id);
+            if (Objects.isNull(found)) {
                 response.setStatus(false);
                 response.setMessage(String.format("Update error : no item for id=%d", id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            Item toUpdate = objectMapper.convertValue(request.getData(), Item.class);
-            toUpdate.setId(id);
-            itemService.update(toUpdate);
+            Item candidate = objectMapper.convertValue(request.getData(), Item.class);
+            candidate.setId(id);
+            itemService.update(candidate);
 
-            response.setData(toUpdate);
+            response.setData(candidate);
             response.setStatus(true);
-            response.setMessage(String.format("Update success : %s", toUpdate));
+            response.setMessage(String.format("Update success : %s", candidate));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
@@ -202,8 +210,8 @@ public class ItemController {
     /**
      * Delete 권한: ADMIN만 가능
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "아이템 삭제",
         description = "PathVariable로 전달된 ID의 아이템을 삭제합니다."
@@ -216,24 +224,24 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "아이템이 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<CommonResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
-            if (id == null) {
+            if (Objects.isNull(id)) {
                 response.setStatus(false);
                 response.setMessage("Delete error : id is null");
                 return ResponseEntity.badRequest().body(response);
             }
-            Item existing = itemService.selectById(id);
-            if (existing == null) {
+            Item found = itemService.selectById(id);
+            if (Objects.isNull(found)) {
                 response.setStatus(false);
                 response.setMessage(String.format("Delete error : no item for id=%d", id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
             itemService.deleteById(id);
-            response.setData(existing);
+            response.setData(found);
             response.setStatus(true);
-            response.setMessage(String.format("Delete success : %s", existing));
+            response.setMessage(String.format("Delete success : %s", found));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -243,5 +251,4 @@ public class ItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 }
