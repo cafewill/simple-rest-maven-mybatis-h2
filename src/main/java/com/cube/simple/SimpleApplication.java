@@ -1,7 +1,9 @@
 package com.cube.simple;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -20,6 +22,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 		  )
 		)
 @SpringBootApplication
+@EnableAutoConfiguration (exclude = {ErrorMvcAutoConfiguration.class})
 public class SimpleApplication {
 
 	public static void main(String[] args) {

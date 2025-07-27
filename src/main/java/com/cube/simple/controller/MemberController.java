@@ -22,8 +22,8 @@ import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.mapper.read.ReadMemberMapper;
 import com.cube.simple.mapper.write.WriteMemberMapper;
 import com.cube.simple.model.Member;
-import com.cube.simple.security.jwt.JwtUtil;
 import com.cube.simple.service.MemberService;
+import com.cube.simple.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;

@@ -91,7 +91,7 @@ public interface DemoWriteMapper {
 }
 ```
 
-### (개발자 테스트 및 데모용) DB 초기화 수동 처리:
+### (개발자 테스트 및 데모용) DB 초기화 자동 처리:
 
 ```java
 @Component

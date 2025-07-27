@@ -1,4 +1,4 @@
-package com.cube.simple.security.jwt;
+package com.cube.simple.util;
 
 import java.util.Date;
 
@@ -8,23 +8,26 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 
 @Component
 public class JwtUtil {
-    private final String secretKey;
-    private final long expiration = 20 * 60 * 1000L; // 20분
+	
+    @Getter
+    @Value("${jwt.secret}")
+    private String secretKey;
+    
+    @Getter
+    @Value("${jwt.expiration}")
+    private long expiration;
 
-    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String generateToken(String username, String role) {
+	public String generateToken(String username, String role) {
         return Jwts.builder()
             .setSubject(username)
             .claim("role", role)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .setExpiration(new Date(System.currentTimeMillis() + getExpiration ()))
+            .signWith(SignatureAlgorithm.HS256, getSecretKey ())
             .compact();
     }
 

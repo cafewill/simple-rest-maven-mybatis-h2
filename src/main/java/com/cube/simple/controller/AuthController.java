@@ -16,7 +16,7 @@ import com.cube.simple.dto.LoginRequest;
 import com.cube.simple.dto.LoginResponse;
 import com.cube.simple.mapper.read.ReadMemberMapper;
 import com.cube.simple.model.Member;
-import com.cube.simple.security.jwt.JwtUtil;
+import com.cube.simple.util.JwtUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
