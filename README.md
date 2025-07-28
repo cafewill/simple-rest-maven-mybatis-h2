@@ -79,12 +79,12 @@ public class ReadDataSourceConfig {
 ### Read/Write Mapper 인터페이스 분리:
 
 ```java
-public interface DemoReadMapper {
+public interface ReadDemoMapper {
     Demo selectById(Long id);
     List<Demo> selectAll();
 }
 
-public interface DemoWriteMapper {
+public interface WriteDemoMapper {
     int insertDemo(Demo demo);
     int updateDemo(Demo demo);
     int deleteById(Long id);
@@ -114,14 +114,21 @@ public class MemberInitializer {
     private WriteMemberMapper writeMemberMapper;
 
     @PostConstruct
-    public void initUsers() {
+    public void initialize() {
         writeMemberMapper.insert(Member.builder()
             .role("ADMIN")
             .id("admin")
-            .password(encrypt("8282"))
+            .password(encrypt("2580"))
             .name("관리자")
             .description("모든 권한 관리자")
             .build());
+        writeMemberMapper.insert(Member.builder()
+                .role("HOST")
+                .id("host")
+                .password(encrypt("8282"))
+                .name("판매자")
+                .description("모든 권한 관리자")
+                .build());
         writeMemberMapper.insert(Member.builder()
             .role("USER")
             .id("jeju")
@@ -129,20 +136,6 @@ public class MemberInitializer {
             .name("제주")
             .description("일반 권한 사용자")
             .build());
-    }
-
-    private String encrypt(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("암호화 실패", e);
-        }
     }
 }
 ```
@@ -152,6 +145,7 @@ public class MemberInitializer {
 | 계정 구분 | ID    | PW   | 설명        |
 | ----- | ----- | ---- | --------- |
 | 관리자   | admin | 8282 | 모든 권한 관리자 |
+| 판매자   | host  | 8282 | 셀러 권한 사용자 |
 | 사용자   | jeju  | 1234 | 일반 권한 사용자 |
 
 ### 🔐 API 접근 권한
@@ -176,9 +170,11 @@ URL : `[API SERVER]/swagger-ui/index.html`
 ## 추가 개발 이슈
 
 * (필요시) `/api/v1/*`, `/api/v2/*` 등 버전 관리 기능 반영
-* 각종 Config, Filter, Interception 및 AOP 코드 구현 반영
-* `/mapper/read/*`, `/mapper/write/*` 등 RW 데이터베이스 분리 구성안 반영
-* Redis, Kafka, RabbitMQ 등 주요 리소스 활용을 위한 코드 구현 (대부분 공통 코드일거고 필요시 개별 비즈니스 로직을 위한 인터페이스 구현 예정)
+* (완료함) `/mapper/read/*`, `/mapper/write/*` 등 RW 데이터베이스 분리 구성안 반영
+* (진행중) 다국어 코드 구현 반영 (한국어, 중국어, 필요시 영어 등)
+* (진행중) 각종 Config, Filter, Interceptor 및 AOP 코드 구현 반영
+* (진행중) 사용자 ROLE 권한 반영 (ADMIN 관리자, HOST 판매자, USER 사용자 등 필요시 DB 적재 및 로드함)
+* (진행중) Redis, S3, Kafka, RabbitMQ 등 주요 리소스 활용을 위한 코드 구현 (대부분 공통 코드일거고 필요시 개별 비즈니스 로직을 위한 인터페이스 구현 예정)
 
 ## REST API 오퍼레이션 네이밍 가이드
 

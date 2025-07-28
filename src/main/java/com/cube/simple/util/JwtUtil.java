@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Component
 public class JwtUtil {
-	
+
     @Getter
     @Value("${jwt.secret}")
     private String secretKey;

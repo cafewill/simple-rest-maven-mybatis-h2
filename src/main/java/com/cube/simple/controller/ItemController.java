@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -51,7 +52,7 @@ public class ItemController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "새 아이템 등록",
-        description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 아이템을 저장합니다."
+        description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 아이템을 저장함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "등록 성공",
@@ -60,7 +61,7 @@ public class ItemController {
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<?> insert(@RequestBody CommonRequest request) {
+    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest request) {
         CommonResponse response = CommonResponse.builder().build();
         try {
             if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
@@ -90,7 +91,7 @@ public class ItemController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Operation(summary = "모든 아이템 조회", description = "등록된 모든 아이템 목록을 반환합니다.")
+    @Operation(summary = "모든 아이템 조회", description = "등록된 모든 아이템 목록을 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
             content = @Content(mediaType = "application/json",
@@ -118,7 +119,7 @@ public class ItemController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Operation(summary = "ID로 아이템 조회", description = "PathVariable로 전달된 ID의 아이템을 반환합니다.")
+    @Operation(summary = "ID로 아이템 조회", description = "PathVariable로 전달된 ID의 아이템을 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
             content = @Content(mediaType = "application/json",
@@ -161,7 +162,7 @@ public class ItemController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "아이템 수정",
-        description = "PathVariable로 전달된 ID의 아이템을, RequestBody로 전달된 데이터로 수정합니다."
+        description = "PathVariable로 전달된 ID의 아이템을, RequestBody로 전달된 데이터로 수정함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "수정 성공",
@@ -214,7 +215,7 @@ public class ItemController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "아이템 삭제",
-        description = "PathVariable로 전달된 ID의 아이템을 삭제합니다."
+        description = "PathVariable로 전달된 ID의 아이템을 삭제함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "삭제 성공",

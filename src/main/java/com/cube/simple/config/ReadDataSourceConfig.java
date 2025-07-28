@@ -16,6 +16,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 @Configuration
 @MapperScan(basePackages = "com.cube.simple.mapper.read", sqlSessionTemplateRef = "readSqlSessionTemplate")
 public class ReadDataSourceConfig {
+	
     @Bean(name = "readDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.read")
     public DataSource readDataSource() {
