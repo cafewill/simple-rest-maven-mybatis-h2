@@ -25,13 +25,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // CSRF 비활성화
-            .csrf(csrf -> csrf.disable())
-            // Stateless 세션 설정
+        .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")
+                .ignoringRequestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                .disable())
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // 인증/인가 규칙
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/h2-console/**").permitAll()
         	    .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/").permitAll()
+                .requestMatchers(HttpMethod.GET, "/welcome").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/demos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/items").hasAnyRole("USER", "ADMIN")
