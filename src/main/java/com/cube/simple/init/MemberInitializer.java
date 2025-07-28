@@ -18,14 +18,21 @@ public class MemberInitializer {
     private WriteMemberMapper writeMemberMapper;
 
     @PostConstruct
-    public void initUsers() {
+    public void initialize() {
         writeMemberMapper.insert(Member.builder()
             .role("ADMIN")
             .id("admin")
-            .password(encrypt("8282"))
+            .password(encrypt("2580"))
             .name("관리자")
             .description("모든 권한 관리자")
             .build());
+        writeMemberMapper.insert(Member.builder()
+                .role("HOST")
+                .id("host")
+                .password(encrypt("8282"))
+                .name("판매자")
+                .description("모든 권한 관리자")
+                .build());
         writeMemberMapper.insert(Member.builder()
             .role("USER")
             .id("bill")

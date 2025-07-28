@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth", description = "사용자 인증 CRUD API")  // 전체 컨트롤러에 태그 지정
+@Tag(name = "Auth", description = "사용자 인증 API")
 public class AuthController {
 
     @Autowired

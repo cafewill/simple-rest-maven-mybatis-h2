@@ -10,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cube.simple.filter.JwtAuthenticationFilter;
+import com.cube.simple.util.JwtUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtUtil jwtUtil;
+
+    public SecurityConfig(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,7 +52,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             // JWT 필터 추가
-            .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
