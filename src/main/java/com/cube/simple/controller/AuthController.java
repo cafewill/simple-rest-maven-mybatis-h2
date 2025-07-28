@@ -1,6 +1,5 @@
 package com.cube.simple.controller;
 
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "ID 또는 비밀번호 불일치"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
         })
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         log.info("로그인 시도: {}", request.getId());
 
         Member found = readMemberMapper.selectById(request.getId());

@@ -16,6 +16,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 @Configuration
 @MapperScan(basePackages = "com.cube.simple.mapper.write", sqlSessionTemplateRef = "writeSqlSessionTemplate")
 public class WriteDataSourceConfig {
+	
     @Bean(name = "writeDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.write")
     public DataSource writeDataSource() {

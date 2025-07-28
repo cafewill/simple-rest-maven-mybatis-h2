@@ -1,5 +1,6 @@
 package com.cube.simple.dto;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,5 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonRequest <T> {
+    @Valid
 	private T data;
 }

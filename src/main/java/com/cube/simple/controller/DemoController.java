@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,7 +62,7 @@ public class DemoController {
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<?> insert(@RequestBody DemoRequest request) {
+    public ResponseEntity<?> insert(@Valid @RequestBody DemoRequest request) {
         DemoResponse response = DemoResponse.builder().build();
         try {
             if (!Objects.isNull (request) && !Objects.isNull (request.getData())) {

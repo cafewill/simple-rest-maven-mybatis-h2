@@ -1,21 +1,23 @@
 package com.cube.simple.controller;
 
-import java.net.URI;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.WelcomeResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Controller
+@RestController
+@Tag(name = "Welcome", description = "루트 접속시 기본 응답 반환함")
 public class WelcomeController {
 	
 	@GetMapping ("/")
@@ -32,7 +34,7 @@ public class WelcomeController {
     @Operation(summary = "환영 메시지 및 클라이언트 IP 반환",
             description = "요청 헤더를 통해 클라이언트 IP를 추출하고, WelcomeResponse 로 반환함")
 	@ApiResponses({
-	     @ApiResponse(responseCode = "200", description = "환영 메시지 반환 성공")
+	     @ApiResponse(responseCode = "200", description = "환영 메시지 반환 성공", content = @Content(schema = @Schema(implementation = WelcomeResponse.class)))
 	})
 	public ResponseEntity<?> welcome(HttpServletRequest request) {
 	    String clientIp = request.getRemoteAddr();
