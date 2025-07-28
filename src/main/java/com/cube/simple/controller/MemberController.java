@@ -22,8 +22,8 @@ import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.mapper.read.ReadMemberMapper;
 import com.cube.simple.mapper.write.WriteMemberMapper;
 import com.cube.simple.model.Member;
-import com.cube.simple.security.jwt.JwtUtil;
 import com.cube.simple.service.MemberService;
+import com.cube.simple.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,7 +66,7 @@ public class MemberController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "새 사용자 등록",
-        description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 사용자를 저장합니다."
+        description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 사용자를 저장함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "등록 성공",
@@ -105,7 +105,7 @@ public class MemberController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Operation(summary = "모든 사용자 조회", description = "등록된 모든 사용자 목록을 반환합니다.")
+    @Operation(summary = "모든 사용자 조회", description = "등록된 모든 사용자 목록을 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
             content = @Content(mediaType = "application/json",
@@ -133,7 +133,7 @@ public class MemberController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Operation(summary = "ID로 사용자 조회", description = "PathVariable로 전달된 ID의 사용자를 반환합니다.")
+    @Operation(summary = "ID로 사용자 조회", description = "PathVariable로 전달된 ID의 사용자를 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
             content = @Content(mediaType = "application/json",
@@ -176,7 +176,7 @@ public class MemberController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(
         summary = "사용자 수정",
-        description = "PathVariable로 전달된 ID의 사용자를, RequestBody로 전달된 데이터로 수정합니다."
+        description = "PathVariable로 전달된 ID의 사용자를, RequestBody로 전달된 데이터로 수정함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "수정 성공",
@@ -228,7 +228,7 @@ public class MemberController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "사용자 삭제",
-        description = "PathVariable로 전달된 ID의 사용자를 삭제합니다."
+        description = "PathVariable로 전달된 ID의 사용자를 삭제함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "삭제 성공",

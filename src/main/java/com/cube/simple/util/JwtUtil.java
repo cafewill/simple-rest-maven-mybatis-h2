@@ -1,4 +1,4 @@
-package com.cube.simple.security.jwt;
+package com.cube.simple.util;
 
 import java.util.Date;
 
@@ -11,12 +11,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtUtil {
-    private final String secretKey;
-    private final long expiration = 20 * 60 * 1000L; // 20분
 
-    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
-        this.secretKey = secretKey;
-    }
+	@Value("${jwt.secret}")
+    private String secretKey;
+	
+	@Value("${jwt.expiration}")
+	private long expiration;
 
     public String generateToken(String username, String role) {
         return Jwts.builder()

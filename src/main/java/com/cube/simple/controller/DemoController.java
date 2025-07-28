@@ -35,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/demos")
-// @SecurityRequirement(name = "JWT")
 @Tag(name = "Demos", description = "데모 CRUD API")
 public class DemoController {
     
@@ -52,7 +51,7 @@ public class DemoController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "새 데모 등록",
-        description = "DemoRequest DTO로 전달된 데이터를 기반으로 새 데모를 저장합니다.",
+        description = "DemoRequest DTO로 전달된 데이터를 기반으로 새 데모를 저장함",
 		security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
@@ -93,7 +92,7 @@ public class DemoController {
     @GetMapping
     @Operation(
     		summary = "모든 데모 조회", 
-    		description = "등록된 모든 데모 목록을 반환합니다."
+    		description = "등록된 모든 데모 목록을 반환함"
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -123,7 +122,7 @@ public class DemoController {
     @GetMapping("/{id}")
     @Operation(
     		summary = "ID로 데모 조회", 
-    		description = "PathVariable로 전달된 ID의 데모를 반환합니다.",
+    		description = "PathVariable로 전달된 ID의 데모를 반환함",
     		security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
@@ -168,7 +167,7 @@ public class DemoController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "데모 수정",
-        description = "PathVariable로 전달된 ID의 데모를, RequestBody로 전달된 데이터로 수정합니다.",
+        description = "PathVariable로 전달된 ID의 데모를, RequestBody로 전달된 데이터로 수정함",
 		security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
@@ -221,7 +220,7 @@ public class DemoController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "데모 삭제",
-        description = "PathVariable로 전달된 ID의 데모를 삭제합니다.",
+        description = "PathVariable로 전달된 ID의 데모를 삭제함",
 		security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
