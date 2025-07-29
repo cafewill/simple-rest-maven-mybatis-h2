@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WelcomeResponse <T> {
 	private boolean status;
-	private String welcome;
+	private String message;
 }

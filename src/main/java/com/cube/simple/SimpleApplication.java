@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 
+/*
 @OpenAPIDefinition(
 		  info = @Info(
 		    title       = "제주여라 백엔드 API",
@@ -17,10 +18,11 @@ import io.swagger.v3.oas.annotations.info.Info;
 		    contact     = @Contact(
 		      name = "제주여라 개발팀",
 		      url  = "https://www.instagram.com/jeju_yeora",
-		      email= ""  // 필요시 이메일 추가
+		      email= ""
 		    )
 		  )
 		)
+*/
 @SpringBootApplication
 @EnableAutoConfiguration (exclude = {ErrorMvcAutoConfiguration.class})
 public class SimpleApplication {

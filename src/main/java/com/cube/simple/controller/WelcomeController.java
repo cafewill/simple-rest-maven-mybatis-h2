@@ -1,7 +1,10 @@
 package com.cube.simple.controller;
 
 import java.net.URI;
+import java.util.Locale;
+import java.util.Objects;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +20,29 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Welcome", description = "루트 접속시 기본 응답 반환함")
 public class WelcomeController {
 	
+    private final MessageSource messageSource;
+
 	@GetMapping ("/")
+    @Operation(summary = "{api.welcome.summary}", description = "{api.welcome.desc}")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "{api.responses.ok}")
+    })
+	/*
     @Operation(summary = "루트 포워딩 (403 또는 404 오류 대신 기본 응답 반환함)",
 	    description = "‘/’ 요청이 들어올 경우 HTTP 200 상태로 /welcome 으로 포워딩")
 	@ApiResponses({
 		@ApiResponse(responseCode = "302", description = "포워딩 성공")
 	})
+	*/
 	public ResponseEntity<Void> home() {
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setLocation(URI.create("/welcome"));
@@ -42,13 +55,25 @@ public class WelcomeController {
 	@ApiResponses({
 	     @ApiResponse(responseCode = "200", description = "환영 메시지 반환 성공", content = @Content(schema = @Schema(implementation = WelcomeResponse.class)))
 	})
-	public ResponseEntity<?> welcome(HttpServletRequest request) {
-	    String clientIp = request.getRemoteAddr();
+	public ResponseEntity<?> welcome(HttpServletRequest request, Locale locale) {
+		
+	    String clientIp = extractClientIp(request);
+        String message = messageSource.getMessage("welcome", new Object[]{clientIp}, locale);
+
 	    WelcomeResponse response = WelcomeResponse.builder()
 	    										.status(true)
-	                                            .welcome(clientIp)
+	                                            .message(message)
 	                                            .build();
-	    log.info("Welcome : {}", response.getWelcome());
+	    log.info("Check welcome => locale : {}, message : {}", locale, response.getMessage());
 	    return ResponseEntity.ok(response);
 	}
+	
+    private String extractClientIp(HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (Objects.nonNull(xfHeader) && !xfHeader.isBlank()) {
+            // 여러 IP가 있을 수 있으므로 첫 번째 값 사용
+            return xfHeader.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }	
 }
