@@ -171,6 +171,8 @@ URL : `[API SERVER]/swagger-ui/index.html`
 
 * (필요시) `/api/v1/*`, `/api/v2/*` 등 버전 관리 기능 반영
 * (완료함) `/mapper/read/*`, `/mapper/write/*` 등 RW 데이터베이스 분리 구성안 반영
+* (진행중) 프런트 - 백엔드 Request / Response 연동 방식 반영 (기본 응답 구조 및 다국어 이슈 등)
+* (진행중) 실행 환경 프로필 및 로깅 설정 반영 (develop, production 필요시 staging 등)
 * (진행중) 다국어 코드 구현 반영 (한국어, 중국어, 필요시 영어 등)
 * (진행중) 각종 Config, Filter, Interceptor 및 AOP 코드 구현 반영
 * (진행중) 사용자 ROLE 권한 반영 (ADMIN 관리자, HOST 판매자, USER 사용자 등 필요시 DB 적재 및 로드함)
