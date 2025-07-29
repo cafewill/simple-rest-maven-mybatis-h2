@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth", description = "사용자 인증 API")
+// @Tag(name = "Auth", description = "사용자 인증 API")
 public class AuthController {
 
     @Autowired
@@ -41,11 +41,11 @@ public class AuthController {
     private final DigestUtils digest = new DigestUtils("SHA-256");
 
     @PostMapping("/login")
-    @Operation(summary = "로그인", description = "ID/PW 인증 후 JWT 반환함")
+    @Operation(summary = "{api.auth.summary}", description = "{api.auth.description}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 성공, JWT 반환"),
-            @ApiResponse(responseCode = "401", description = "ID 또는 비밀번호 불일치"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "200", description = "{api.responses.ok}"),
+            @ApiResponse(responseCode = "401", description = "{api.responses.unauthorized}"),
+            @ApiResponse(responseCode = "500", description = "{api.responses.error}")
         })
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         log.info("로그인 시도: {}", request.getId());
@@ -55,7 +55,7 @@ public class AuthController {
         log.info("Check : id {}, password [{}] (found [{}])", request.getId (), digest.digestAsHex(request.getPassword()), found.getPassword ());
 
         if (Objects.nonNull (found) && !Objects.equals(found.getPassword(), digest.digestAsHex(request.getPassword()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ID 또는 비밀번호 불일치");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{api.responses.unauthorized}");
         }
 
         String token = jwtUtil.generateToken(found.getId(), found.getRole());

@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/members")
 @SecurityRequirement(name = "JWT")
-@Tag(name = "Members", description = "사용자 CRUD API")
+// @Tag(name = "Members", description = "사용자 CRUD API")
 public class MemberController {
 
     @Autowired

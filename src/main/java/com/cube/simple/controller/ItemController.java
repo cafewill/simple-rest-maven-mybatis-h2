@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/items")
 @SecurityRequirement(name = "JWT")
-@Tag(name = "Items", description = "아이템 CRUD API")
+// @Tag(name = "Items", description = "아이템 CRUD API")
 public class ItemController {
     
     @Autowired

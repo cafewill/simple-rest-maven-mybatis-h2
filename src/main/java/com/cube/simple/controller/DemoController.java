@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/demos")
-@Tag(name = "Demos", description = "데모 CRUD API")
+// @Tag(name = "Demos", description = "데모 CRUD API")
 public class DemoController {
     
     @Autowired
@@ -50,18 +50,28 @@ public class DemoController {
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "새 데모 등록",
         description = "DemoRequest DTO로 전달된 데이터를 기반으로 새 데모를 저장함",
 		security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "등록 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = DemoResponse.class))),
+        @ApiResponse(responseCode = "200", description = "등록 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+    	    summary     = "{api.demo.insert.summary}",
+    	    description = "{api.demo.insert.description}",
+    	    security    = @SecurityRequirement(name = "JWT")
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "{api.demo.insert.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "400", description = "{api.demo.insert.responses.bad_request}"),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.insert.responses.error}")
+	})    
     public ResponseEntity<?> insert(@Valid @RequestBody DemoRequest request) {
         DemoResponse response = DemoResponse.builder().build();
         try {
@@ -91,6 +101,7 @@ public class DemoController {
      * Read 권한: 모두 공개 (인증 없이 접근 가능)
      */
     @GetMapping
+    /*
     @Operation(
     		summary = "모든 데모 조회", 
     		description = "등록된 모든 데모 목록을 반환함"
@@ -101,6 +112,15 @@ public class DemoController {
                 schema = @Schema(implementation = DemoResponse.class))),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+    	    summary     = "{api.demo.selectAll.summary}",
+    	    description = "{api.demo.selectAll.description}"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "{api.demo.selectAll.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.selectAll.responses.error}")
+	})        
     public ResponseEntity<?> selectAll() {
         DemoResponse response = DemoResponse.builder().build();
         try {
@@ -121,6 +141,7 @@ public class DemoController {
      * Read 권한: 모두 공개 (인증 없이 접근 가능)
      */
     @GetMapping("/{id}")
+    /*
     @Operation(
     		summary = "ID로 데모 조회", 
     		description = "PathVariable로 전달된 ID의 데모를 반환함",
@@ -134,6 +155,17 @@ public class DemoController {
         @ApiResponse(responseCode = "404", description = "데모 없음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+    	    summary     = "{api.demo.selectById.summary}",
+    	    description = "{api.demo.selectById.description}"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "{api.demo.selectById.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "400", description = "{api.demo.selectById.responses.bad_request}"),
+	    @ApiResponse(responseCode = "404", description = "{api.demo.selectById.responses.responses.not_found}"),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.selectById.responses.error}")
+	})        
     public ResponseEntity<?> selectById(@PathVariable Long id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
@@ -166,6 +198,7 @@ public class DemoController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "데모 수정",
         description = "PathVariable로 전달된 ID의 데모를, RequestBody로 전달된 데이터로 수정함",
@@ -179,6 +212,18 @@ public class DemoController {
         @ApiResponse(responseCode = "404", description = "데모가 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+    	    summary     = "{api.demo.update.summary}",
+    	    description = "{api.demo.update.description}",
+    	    security    = @SecurityRequirement(name = "JWT")
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "{api.demo.update.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "400", description = "{api.demo.update.responses.bad_request}"),
+	    @ApiResponse(responseCode = "404", description = "{api.demo.update.responses.responses.not_found}"),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.update.responses.error}")
+	})        
     public ResponseEntity<?> update(
             @PathVariable Long id,
             @RequestBody DemoRequest request) {
@@ -219,6 +264,7 @@ public class DemoController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "데모 삭제",
         description = "PathVariable로 전달된 ID의 데모를 삭제함",
@@ -232,6 +278,18 @@ public class DemoController {
         @ApiResponse(responseCode = "404", description = "데모가 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+    	    summary     = "{api.demo.delete.summary}",
+    	    description = "{api.demo.delete.description}",
+    	    security    = @SecurityRequirement(name = "JWT")
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "{api.demo.delete.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "400", description = "{api.demo.delete.responses.bad_request}"),
+	    @ApiResponse(responseCode = "404", description = "{api.demo.delete.responses.responses.not_found}"),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.delete.responses.error}")
+	})            
     public ResponseEntity<?> delete(@PathVariable Long id) {
         DemoResponse response = DemoResponse.builder().build();
         try {
