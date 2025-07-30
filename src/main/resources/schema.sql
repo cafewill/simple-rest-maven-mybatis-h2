@@ -11,6 +11,7 @@ CREATE TABLE Item (
 	, price BIGINT NOT NULL
 	, name VARCHAR (255) NOT NULL
 	, image VARCHAR (255) NOT NULL
+	, category VARCHAR (255) NOT NULL
 	, description VARCHAR (255)
 );
 DROP TABLE IF EXISTS Member;

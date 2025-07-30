@@ -49,7 +49,7 @@ public class DemoController {
      * Create 권한: ADMIN 만 가능
      */
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     /*
     @Operation(
         summary = "새 데모 등록",
@@ -197,7 +197,7 @@ public class DemoController {
      * Update 권한: ADMIN 만 가능
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     /*
     @Operation(
         summary = "데모 수정",
@@ -214,17 +214,17 @@ public class DemoController {
     })
     */
     @Operation(
-    	    summary     = "{api.demo.update.summary}",
-    	    description = "{api.demo.update.description}",
+    	    summary     = "{api.demo.updateById.summary}",
+    	    description = "{api.demo.updateById.description}",
     	    security    = @SecurityRequirement(name = "JWT")
 	)
 	@ApiResponses({
-	    @ApiResponse(responseCode = "200", description = "{api.demo.update.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
-	    @ApiResponse(responseCode = "400", description = "{api.demo.update.responses.bad_request}"),
-	    @ApiResponse(responseCode = "404", description = "{api.demo.update.responses.responses.not_found}"),
-	    @ApiResponse(responseCode = "500", description = "{api.demo.update.responses.error}")
+	    @ApiResponse(responseCode = "200", description = "{api.demo.updateById.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "400", description = "{api.demo.updateById.responses.bad_request}"),
+	    @ApiResponse(responseCode = "404", description = "{api.demo.updateById.responses.responses.not_found}"),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.updateById.responses.error}")
 	})        
-    public ResponseEntity<?> update(
+    public ResponseEntity<?> updateById(
             @PathVariable Long id,
             @RequestBody DemoRequest request) {
 
@@ -263,7 +263,7 @@ public class DemoController {
      * Delete 권한: ADMIN 만 가능
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     /*
     @Operation(
         summary = "데모 삭제",
@@ -280,17 +280,17 @@ public class DemoController {
     })
     */
     @Operation(
-    	    summary     = "{api.demo.delete.summary}",
-    	    description = "{api.demo.delete.description}",
+    	    summary     = "{api.demo.deleteById.summary}",
+    	    description = "{api.demo.deleteById.description}",
     	    security    = @SecurityRequirement(name = "JWT")
 	)
 	@ApiResponses({
-	    @ApiResponse(responseCode = "200", description = "{api.demo.delete.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
-	    @ApiResponse(responseCode = "400", description = "{api.demo.delete.responses.bad_request}"),
-	    @ApiResponse(responseCode = "404", description = "{api.demo.delete.responses.responses.not_found}"),
-	    @ApiResponse(responseCode = "500", description = "{api.demo.delete.responses.error}")
+	    @ApiResponse(responseCode = "200", description = "{api.demo.deleteById.responses.ok}", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
+	    @ApiResponse(responseCode = "400", description = "{api.demo.deleteById.responses.bad_request}"),
+	    @ApiResponse(responseCode = "404", description = "{api.demo.deleteById.responses.responses.not_found}"),
+	    @ApiResponse(responseCode = "500", description = "{api.demo.deleteById.responses.error}")
 	})            
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         DemoResponse response = DemoResponse.builder().build();
         try {
             if (Objects.isNull(id)) {

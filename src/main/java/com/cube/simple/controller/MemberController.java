@@ -3,7 +3,6 @@ package com.cube.simple.controller;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.CommonRequest;
 import com.cube.simple.dto.CommonResponse;
-import com.cube.simple.mapper.read.ReadMemberMapper;
-import com.cube.simple.mapper.write.WriteMemberMapper;
 import com.cube.simple.model.Member;
 import com.cube.simple.service.MemberService;
-import com.cube.simple.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,22 +44,12 @@ public class MemberController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ReadMemberMapper readMemberMapper;
-
-    @Autowired
-    private WriteMemberMapper writeMemberMapper;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    private final DigestUtils digest = new DigestUtils("SHA-256");
-
     /**
      * Create 권한: ADMIN만 가능
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "새 사용자 등록",
         description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 사용자를 저장함"
@@ -75,6 +60,18 @@ public class MemberController {
                 schema = @Schema(implementation = CommonResponse.class))),
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
+    })
+    */
+    @Operation(
+        summary     = "api.member.insert.summary",
+        description = "api.member.insert.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.member.insert.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "400", description = "api.member.insert.responses.bad_request"),
+        @ApiResponse(responseCode = "500", description = "api.member.insert.responses.error")
     })
     public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest request) {
         CommonResponse response = CommonResponse.builder().build();
@@ -105,13 +102,25 @@ public class MemberController {
      * Read 권한: ADMIN 가능
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(summary = "모든 사용자 조회", description = "등록된 모든 사용자 목록을 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = CommonResponse.class))),
         @ApiResponse(responseCode = "500", description = "서버 에러")
+    })
+    */
+    @Operation(
+        summary     = "api.member.selectAll.summary",
+        description = "api.member.selectAll.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.member.selectAll.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "500", description = "api.member.selectAll.responses.error")
     })
     public ResponseEntity<?> selectAll() {
         CommonResponse response = CommonResponse.builder().build();
@@ -133,7 +142,9 @@ public class MemberController {
      * Read by ID 권한: USER, ADMIN 가능
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    /*
     @Operation(summary = "ID로 사용자 조회", description = "PathVariable로 전달된 ID의 사용자를 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -142,6 +153,19 @@ public class MemberController {
         @ApiResponse(responseCode = "400", description = "잘못된 ID"),
         @ApiResponse(responseCode = "404", description = "사용자 없음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
+    })
+    */
+    @Operation(
+        summary     = "api.member.selectById.summary",
+        description = "api.member.selectById.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.member.selectById.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "400", description = "api.member.selectById.responses.bad_request"),
+        @ApiResponse(responseCode = "404", description = "api.member.selectById.responses.not_found"),
+        @ApiResponse(responseCode = "500", description = "api.member.selectById.responses.error")
     })
     public ResponseEntity<?> selectById(@PathVariable String id) {
         CommonResponse response = CommonResponse.builder().build();
@@ -174,7 +198,9 @@ public class MemberController {
      * Update 권한: USER, ADMIN만 가능
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
+    // @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    /*
     @Operation(
         summary = "사용자 수정",
         description = "PathVariable로 전달된 ID의 사용자를, RequestBody로 전달된 데이터로 수정함"
@@ -187,7 +213,18 @@ public class MemberController {
         @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<?> update(
+    */
+    @Operation(
+	    summary     = "api.member.updateById.summary",
+	    description = "api.member.updateById.description"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "api.member.updateById.responses.ok"),
+	    @ApiResponse(responseCode = "400", description = "api.member.updateById.responses.bad_request"),
+	    @ApiResponse(responseCode = "404", description = "api.member.updateById.responses.not_found"),
+	    @ApiResponse(responseCode = "500", description = "api.member.updateById.responses.error")
+	})
+    public ResponseEntity<?> updateById(
             @PathVariable String id,
             @RequestBody CommonRequest request) {
 
@@ -226,7 +263,9 @@ public class MemberController {
      * Delete 권한: ADMIN만 가능
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
+    // @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "사용자 삭제",
         description = "PathVariable로 전달된 ID의 사용자를 삭제함"
@@ -239,7 +278,18 @@ public class MemberController {
         @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<CommonResponse> delete(@PathVariable String id) {
+    */
+    @Operation(
+	    summary     = "api.member.deleteById.summary",
+	    description = "api.member.deleteById.description"
+	)
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "api.member.deleteById.responses.ok"),
+	    @ApiResponse(responseCode = "400", description = "api.member.deleteById.responses.bad_request"),
+	    @ApiResponse(responseCode = "404", description = "api.member.deleteById.responses.not_found"),
+	    @ApiResponse(responseCode = "500", description = "api.member.deleteById.responses.error")
+	})
+    public ResponseEntity<CommonResponse> deleteById(@PathVariable String id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
             if (Objects.isNull(id)) {
@@ -265,6 +315,5 @@ public class MemberController {
             response.setMessage(String.format("Delete error : %s", e.getLocalizedMessage()));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-    }    
-
+    }
 }

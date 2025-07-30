@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.CommonRequest;
@@ -28,7 +29,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,7 +49,8 @@ public class ItemController {
      * Create 권한: ADMIN만 가능
      */
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "새 아이템 등록",
         description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 아이템을 저장함"
@@ -61,6 +62,18 @@ public class ItemController {
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+        summary     = "api.item.insert.summary",
+        description = "api.item.insert.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.item.insert.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "400", description = "api.item.insert.responses.bad_request"),
+        @ApiResponse(responseCode = "500", description = "api.item.insert.responses.error")
+    })    
     public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest request) {
         CommonResponse response = CommonResponse.builder().build();
         try {
@@ -90,7 +103,8 @@ public class ItemController {
      * Read 권한: USER, ADMIN 가능
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    /*
     @Operation(summary = "모든 아이템 조회", description = "등록된 모든 아이템 목록을 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -98,10 +112,27 @@ public class ItemController {
                 schema = @Schema(implementation = CommonResponse.class))),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<?> selectAll() {
+    */
+    @Operation(
+        summary     = "api.item.selectAll.summary",
+        description = "api.item.selectAll.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.item.selectAll.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "500", description = "api.item.selectAll.responses.error")
+    })
+    public ResponseEntity<?> selectAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search
+		) {
+    	
         CommonResponse response = CommonResponse.builder().build();
         try {
-            List<Item> items = itemService.selectAll();
+            List<Item> items = itemService.selectAll(page, size, category, search);
             response.setData(items);
             response.setStatus(true);
             response.setMessage(String.format("Select success : %d items", items.size()));
@@ -118,7 +149,8 @@ public class ItemController {
      * Read by ID 권한: USER, ADMIN 가능
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    /*
     @Operation(summary = "ID로 아이템 조회", description = "PathVariable로 전달된 ID의 아이템을 반환함")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -128,6 +160,19 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "아이템 없음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
+    */
+    @Operation(
+        summary     = "api.item.selectById.summary",
+        description = "api.item.selectById.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.item.selectById.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "400", description = "api.item.selectById.responses.bad_request"),
+        @ApiResponse(responseCode = "404", description = "api.item.selectById.responses.not_found"),
+        @ApiResponse(responseCode = "500", description = "api.item.selectById.responses.error")
+    })    
     public ResponseEntity<?> selectById(@PathVariable Long id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
@@ -159,7 +204,8 @@ public class ItemController {
      * Update 권한: ADMIN만 가능
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "아이템 수정",
         description = "PathVariable로 전달된 ID의 아이템을, RequestBody로 전달된 데이터로 수정함"
@@ -172,7 +218,20 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "아이템이 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<?> update(
+    */
+    @Operation(
+        summary     = "api.item.updateById.summary",
+        description = "api.item.updateById.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.item.updateById.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "400", description = "api.item.updateById.responses.bad_request"),
+        @ApiResponse(responseCode = "404", description = "api.item.updateById.responses.not_found"),
+        @ApiResponse(responseCode = "500", description = "api.item.updateById.responses.error")
+    })
+    public ResponseEntity<?> updateById(
             @PathVariable Long id,
             @RequestBody CommonRequest request) {
 
@@ -212,7 +271,8 @@ public class ItemController {
      * Delete 권한: ADMIN만 가능
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
+    /*
     @Operation(
         summary = "아이템 삭제",
         description = "PathVariable로 전달된 ID의 아이템을 삭제함"
@@ -225,7 +285,20 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "아이템이 존재하지 않음"),
         @ApiResponse(responseCode = "500", description = "서버 에러")
     })
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    */
+    @Operation(
+        summary     = "api.item.deleteById.summary",
+        description = "api.item.deleteById.description"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "api.item.deleteById.responses.ok",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = CommonResponse.class))),
+        @ApiResponse(responseCode = "400", description = "api.item.deleteById.responses.bad_request"),
+        @ApiResponse(responseCode = "404", description = "api.item.deleteById.responses.not_found"),
+        @ApiResponse(responseCode = "500", description = "api.item.deleteById.responses.error")
+    })
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
             if (Objects.isNull(id)) {

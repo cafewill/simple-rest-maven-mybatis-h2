@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.cube.simple.mapper.read.ReadItemMapper;
 import com.cube.simple.mapper.write.WriteItemMapper;
@@ -25,8 +26,18 @@ public class ItemService {
 	}
 
     @Transactional(readOnly = true)
-	public List <Item> selectAll () {
-		return readItemMapper.selectAll ();
+	public List <Item> selectAll (int page, int size, String category, String search) {
+
+    	if (page < 1) {
+            page = 1;
+        }
+        if (!StringUtils.hasText(category)) {
+            category = null;
+        }
+        if (!StringUtils.hasText(search)) {
+            search = null;
+        }    	
+		return readItemMapper.selectAll (page, size, category, search);
 	}
 
     @Transactional(readOnly = true)

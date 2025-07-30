@@ -3,6 +3,7 @@ package com.cube.simple.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,12 +40,26 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/h2-console/**").permitAll()
         	    .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/").permitAll()
-                .requestMatchers(HttpMethod.GET, "/welcome").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/demos").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/items/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/members/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,	"/").permitAll()
+                .requestMatchers(HttpMethod.GET,	"/welcome").permitAll()
+                .requestMatchers(HttpMethod.POST,	"/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET,	"/api/demos").permitAll()
+                .requestMatchers(HttpMethod.GET,	"/api/demos/**").permitAll()
+                .requestMatchers(HttpMethod.PUT,	"/api/demos/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,	"/api/demos").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,	"/api/items").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.GET,	"/api/items/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.PUT,	"/api/items/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,	"/api/items").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,	"/api/members").hasAnyRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,	"/api/members").hasRole("ADMIN")
+                // (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id']
+                // .requestMatchers(HttpMethod.GET,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or #request.getAttribute('id') == authentication.name"))
+                // .requestMatchers(HttpMethod.PUT,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or #request.getAttribute('id') == authentication.name"))
+                // .requestMatchers(HttpMethod.DELETE,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or #request.getAttribute('id') == authentication.name"))
+                // .requestMatchers(HttpMethod.GET,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id'] == authentication.name"))
+                // .requestMatchers(HttpMethod.PUT,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id'] == authentication.name"))
+                // .requestMatchers(HttpMethod.DELETE,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id'] == authentication.name"))
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

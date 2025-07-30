@@ -174,6 +174,7 @@ URL : `[API SERVER]/swagger-ui/index.html`
 * (완료함, 단 서비스 구현하며 추가 커스터마이징 필요함) 사용자 ROLE 권한 반영 (ADMIN 관리자, HOST 판매자, USER 사용자 등 필요시 DB 적재 및 로드함)
 * (진행중) 프런트 - 백엔드 Request / Response 연동 방식 반영 (기본 응답 구조 및 다국어 이슈 등)
 * (진행중) 각종 Config, Filter, Interceptor 및 AOP 코드 구현
+* (진행중) 이름, 주소, 주민번호, 전화번호 등 민감정보에 대한 AES 암봏호화 코드 구현
 * (진행중, S3, Redis 우선 진행중) S3, Redis, Kafka, RabbitMQ 등 주요 리소스 활용을 위한 코드 구현 (대부분 공통 코드일거고 필요시 개별 비즈니스 로직을 위한 인터페이스 구현 예정)
 * (진행중, 단 개발에 집중하고 이후 운영 환경 마련후 진행해도 무방함) 실행 환경 프로필 및 로깅 설정 반영 (develop, production 필요시 staging 등)
 * (필요시, 자체 서비스용이고, 대외 공개 API 는 아니기에 불필요 하겠음) `/api/v1/*`, `/api/v2/*` 등 버전 관리 기능 반영

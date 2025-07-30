@@ -6,7 +6,7 @@
 <mapper namespace="com.cube.simple.mapper.write.WriteItemMapper">
 
     <insert id="insert" parameterType="Item">
-		INSERT INTO Item (price, name, image, description) VALUES (#{price}, #{name}, #{image}, #{description})
+		INSERT INTO Item (price, name, image, category, description) VALUES (#{price}, #{name}, #{image}, #{category}, #{description})
     </insert>
 
     <update id="update" parameterType="Item">
@@ -21,6 +21,9 @@
 			</if>
 			<if test='image != null'>
 				image = #{image},
+			</if>
+			<if test='category != null'>
+				category = #{category},
 			</if>
 			<if test='description != null'>
 				description = #{description}
