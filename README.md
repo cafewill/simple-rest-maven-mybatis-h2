@@ -162,6 +162,87 @@ public class MemberInitializer {
 * 필터: `JwtAuthenticationFilter.java`
 * 보안 설정: `SecurityConfig.java`
 
+### 개인 정보 등 데이터 암·복호화 구현 안내
+
+이 프로젝트는 AES 알고리즘을 이용해 민감한 데이터를 자동으로 암·복호화합니다.  
+아래 컴포넌트와 어노테이션을 활용해 간편하게 적용할 수 있습니다:
+
+1. **Aspect 클래스**  
+   - `/src/main/java/com/cube/simple/aspect/AESEncryptAspect.java`  
+   - `/src/main/java/com/cube/simple/aspect/AESDecryptAspect.java`  
+   : 메서드 실행 전후에 `@AESEncrypt`, `@AESDecrypt` 어노테이션을 감지하여 데이터 변환을 수행합니다.
+
+2. **모델 어노테이션**  
+   - `/src/main/java/com/cube/simple/model/Member.java`  
+     ```java
+     @Data
+     @AESData
+     public class Member {
+         private Long id;
+         private String username;
+         private String password; // 저장 시 자동 암호화, 조회 시 자동 복호화
+         // …
+     }
+     ```
+   : `@AESData`를 붙인 클래스의 모든 String 필드에 대해 암·복호화를 처리합니다.
+
+3. **서비스 레벨 어노테이션**  
+   - `/src/main/java/com/cube/simple/service/MemberService.java`  
+     ```java
+     @Service
+     @RequiredArgsConstructor
+     public class MemberService {
+         private final MemberMapper memberMapper;
+
+         @AESEncrypt   // 파라미터의 민감 필드 암호화
+         public void createMember(Member member) { … }
+
+         @AESDecrypt   // 반환 객체의 민감 필드 복호화
+         public Member getMember(Long id) { … }
+     }
+     ```
+
+4. **초기 데이터 삽입 예제**  
+   - `/src/main/java/com/cube/simple/init/MemberInitializer.java`  
+   : 애플리케이션 시작 시 샘플 `Member` 데이터를 암호화하여 DB에 저장합니다.
+   
+### Cache 구현 안내 (Redis 또는 로컬 메모리 Cache)
+
+CRUD API 성능 향상을 위해 Spring Cache 추상화를 사용하여 Redis 또는 로컬 메모리 캐시를 지원합니다.
+
+1. **컨트롤러 / 서비스 예시**  
+   - `/src/main/java/com/cube/simple/controller/CachedItemController.java`  
+   - `/src/main/java/com/cube/simple/service/CachedItemService.java`  
+   ```java
+   @Service
+   @RequiredArgsConstructor
+   public class CachedItemService {
+   
+       	@CacheEvict(cacheNames = {"items", "itemCount"}, allEntries = true)
+		public void insert (Item item)
+   
+		@Cacheable(cacheNames = "items", key = "#page + '-' + #size + '-' + (#category?:'') + '-' + (#search?:'')")
+		public List <Item> selectAll (int page, int size, String category, String search)
+
+	    @Cacheable(cacheNames = "item", key = "#id")
+		public Item selectById (Long id)
+		
+	    @Caching(evict = {
+	            @CacheEvict(cacheNames = "item",      key = "#item.id"),
+	            @CacheEvict(cacheNames = "items",     allEntries = true),
+	            @CacheEvict(cacheNames = "itemCount", allEntries = true)
+	        })
+		public void update (Item item)
+		
+	    @Caching(evict = {
+	            @CacheEvict(cacheNames = "item",      key = "#id"),
+	            @CacheEvict(cacheNames = "items",     allEntries = true),
+	            @CacheEvict(cacheNames = "itemCount", allEntries = true)
+	        })
+		public void deleteById (Long id)
+   }
+   ```
+   
 ## REST API 규격서 가이드
 
 Controller 구현시 Swagger 관련 어노테이션 정보 구현하면 자동 반영됨

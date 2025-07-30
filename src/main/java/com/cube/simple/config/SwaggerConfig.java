@@ -68,7 +68,7 @@ public class SwaggerConfig {
     private static final Pattern MSG_PATTERN = Pattern.compile("\\{(.+?)\\}");
 
     private String resolveMessageKeys(String text, MessageSource ms, Locale locale) {
-        if (text == null) return null;
+        if (Objects.isNull(text)) return null;
         Matcher matcher = MSG_PATTERN.matcher(text);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
@@ -91,7 +91,7 @@ public class SwaggerConfig {
                     pathItem.readOperations().forEach(op -> {
                         op.setSummary(resolveMessageKeys(op.getSummary(), messageSource, locale));
                         op.setDescription(resolveMessageKeys(op.getDescription(), messageSource, locale));
-                        if (op.getResponses() != null) {
+                        if (Objects.nonNull(op.getResponses())) {
                             op.getResponses().values().forEach(r ->
                                 r.setDescription(resolveMessageKeys(r.getDescription(), messageSource, locale))
                             );

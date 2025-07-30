@@ -20,7 +20,6 @@ import com.cube.simple.dto.CommonRequest;
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.model.Member;
 import com.cube.simple.service.MemberService;
-import com.cube.simple.util.AESUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,10 +39,10 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
     @Autowired
-    private MemberService memberService;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private MemberService memberService;
 
     /**
      * Create 권한: ADMIN만 가능
