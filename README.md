@@ -197,11 +197,15 @@ public class MemberInitializer {
      public class MemberService {
          private final MemberMapper memberMapper;
 
-         @AESEncrypt   // 파라미터의 민감 필드 암호화
-         public void createMember(Member member) { … }
+	    @AESEncrypt // @AESData 로 설정된 항목 암호화
+		@Transactional
+		public void insert (Member member)
 
-         @AESDecrypt   // 반환 객체의 민감 필드 복호화
-         public Member getMember(Long id) { … }
+         @AESDecrypt  // @AESData 로 설정된 항목 복호화
+         public Member selectById(Long id)
+         
+         @AESDecrypt  // @AESData 로 설정된 항목 복호화
+         public List <Member> selectAll ()
      }
      ```
 
