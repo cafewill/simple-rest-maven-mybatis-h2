@@ -2,7 +2,6 @@ package com.cube.simple.controller;
 
 import java.util.Objects;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.LoginRequest;
 import com.cube.simple.dto.LoginResponse;
-import com.cube.simple.mapper.read.ReadMemberMapper;
 import com.cube.simple.model.Member;
+import com.cube.simple.service.AuthService;
 import com.cube.simple.util.JWTUtil;
 import com.cube.simple.util.SHAUtil;
 
@@ -33,10 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 
     @Autowired
-    private ReadMemberMapper readMemberMapper;
+    private JWTUtil jwtUtil;
 
     @Autowired
-    private JWTUtil jwtUtil;
+    private AuthService authService;
 
     @PostMapping("/login")
     @Operation(summary = "{api.auth.summary}", description = "{api.auth.description}")
@@ -48,7 +47,7 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         log.info("로그인 시도: {}", request.getId());
 
-        Member found = readMemberMapper.selectById(request.getId());
+        Member found = authService.selectById(request.getId());
 
         log.info("Check : id {}, password [{}] (found [{}])", request.getId (), SHAUtil.encrypt(request.getPassword()), found.getPassword ());
 

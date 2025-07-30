@@ -6,7 +6,7 @@
 <mapper namespace="com.cube.simple.mapper.write.WriteMemberMapper">
 
     <insert id="insert" parameterType="Member">
-		INSERT INTO Member (role, id, password, name, description) VALUES (#{role}, #{id}, #{password}, #{name}, #{description})
+		INSERT INTO Member (role, id, password, name, phone, description) VALUES (#{role}, #{id}, #{password}, #{name}, #{phone}, #{description})
     </insert>
 
     <update id="update" parameterType="Member">
@@ -21,6 +21,9 @@
 			</if>
 			<if test='name != null'>
 				name = #{name},
+			</if>
+			<if test='phone != null'>
+				phone = #{phone},
 			</if>
 			<if test='description != null'>
 				description = #{description}

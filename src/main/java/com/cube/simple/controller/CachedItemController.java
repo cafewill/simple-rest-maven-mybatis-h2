@@ -34,17 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/items")
+@RequestMapping("/api/cached/items")
 @SecurityRequirement(name = "JWT")
 // @Tag(name = "Items", description = "아이템 CRUD API")
-public class ItemController {
+public class CachedItemController {
     
     @Autowired
     private ObjectMapper objectMapper;
     
-    @Autowired
-    private ItemService itemService;
-
     @Autowired
     private CachedItemService cachedItemService;
 
@@ -68,7 +65,7 @@ public class ItemController {
         try {
             if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
                 Item candidate = objectMapper.convertValue(request.getData(), Item.class);
-                itemService.insert(candidate);
+                cachedItemService.insert(candidate);
                 response.setData(candidate);
                 response.setStatus(true);
                 response.setMessage(String.format("Insert success : %s", candidate));
@@ -111,7 +108,7 @@ public class ItemController {
     	
         CommonResponse response = CommonResponse.builder().build();
         try {
-            List<Item> items = itemService.selectAll(page, size, category, search);
+            List<Item> items = cachedItemService.selectAll(page, size, category, search);
             response.setData(items);
             response.setStatus(true);
             response.setMessage(String.format("Select success : %d items", items.size()));
@@ -148,7 +145,7 @@ public class ItemController {
                 response.setMessage("Select error : id is null");
                 return ResponseEntity.badRequest().body(response);
             }
-            Item item = itemService.selectById(id);
+            Item item = cachedItemService.selectById(id);
             if (Objects.nonNull(item)) {
                 response.setData(item);
                 response.setStatus(true);
@@ -194,7 +191,7 @@ public class ItemController {
                 response.setMessage("Update error : invalid id or request");
                 return ResponseEntity.badRequest().body(response);
             }
-            Item found = itemService.selectById(id);
+            Item found = cachedItemService.selectById(id);
             if (Objects.isNull(found)) {
                 response.setStatus(false);
                 response.setMessage(String.format("Update error : no item for id=%d", id));
@@ -203,7 +200,7 @@ public class ItemController {
 
             Item candidate = objectMapper.convertValue(request.getData(), Item.class);
             candidate.setId(id);
-            itemService.update(candidate);
+            cachedItemService.update(candidate);
 
             response.setData(candidate);
             response.setStatus(true);
@@ -243,13 +240,13 @@ public class ItemController {
                 response.setMessage("Delete error : id is null");
                 return ResponseEntity.badRequest().body(response);
             }
-            Item found = itemService.selectById(id);
+            Item found = cachedItemService.selectById(id);
             if (Objects.isNull(found)) {
                 response.setStatus(false);
                 response.setMessage(String.format("Delete error : no item for id=%d", id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-            itemService.deleteById(id);
+            cachedItemService.deleteById(id);
             response.setData(found);
             response.setStatus(true);
             response.setMessage(String.format("Delete success : %s", found));
