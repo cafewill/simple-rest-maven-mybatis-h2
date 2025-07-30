@@ -49,20 +49,6 @@ public class ItemController {
      * Create 권한: ADMIN만 가능
      */
     @PostMapping
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "새 아이템 등록",
-        description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 아이템을 저장함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "등록 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.item.insert.summary",
         description = "api.item.insert.description"
@@ -103,16 +89,6 @@ public class ItemController {
      * Read 권한: USER, ADMIN 가능
      */
     @GetMapping
-    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    /*
-    @Operation(summary = "모든 아이템 조회", description = "등록된 모든 아이템 목록을 반환함")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.item.selectAll.summary",
         description = "api.item.selectAll.description"
@@ -149,18 +125,6 @@ public class ItemController {
      * Read by ID 권한: USER, ADMIN 가능
      */
     @GetMapping("/{id}")
-    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    /*
-    @Operation(summary = "ID로 아이템 조회", description = "PathVariable로 전달된 ID의 아이템을 반환함")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID"),
-        @ApiResponse(responseCode = "404", description = "아이템 없음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.item.selectById.summary",
         description = "api.item.selectById.description"
@@ -204,21 +168,6 @@ public class ItemController {
      * Update 권한: ADMIN만 가능
      */
     @PutMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "아이템 수정",
-        description = "PathVariable로 전달된 ID의 아이템을, RequestBody로 전달된 데이터로 수정함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "수정 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID 또는 요청"),
-        @ApiResponse(responseCode = "404", description = "아이템이 존재하지 않음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.item.updateById.summary",
         description = "api.item.updateById.description"
@@ -271,21 +220,6 @@ public class ItemController {
      * Delete 권한: ADMIN만 가능
      */
     @DeleteMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "아이템 삭제",
-        description = "PathVariable로 전달된 ID의 아이템을 삭제함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "삭제 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID"),
-        @ApiResponse(responseCode = "404", description = "아이템이 존재하지 않음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.item.deleteById.summary",
         description = "api.item.deleteById.description"

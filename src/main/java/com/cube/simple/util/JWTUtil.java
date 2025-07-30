@@ -11,7 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 
 @Component
-public class JwtUtil {
+public class JWTUtil {
 
     @Getter
     @Value("${jwt.secret}")

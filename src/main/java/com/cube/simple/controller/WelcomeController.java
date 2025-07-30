@@ -70,7 +70,6 @@ public class WelcomeController {
     private String extractClientIp(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
         if (Objects.nonNull(xfHeader) && !xfHeader.isBlank()) {
-            // 여러 IP가 있을 수 있으므로 첫 번째 값 사용
             return xfHeader.split(",")[0].trim();
         }
         return request.getRemoteAddr();

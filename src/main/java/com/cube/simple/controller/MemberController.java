@@ -20,6 +20,7 @@ import com.cube.simple.dto.CommonRequest;
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.model.Member;
 import com.cube.simple.service.MemberService;
+import com.cube.simple.util.AESUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,19 +50,6 @@ public class MemberController {
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "새 사용자 등록",
-        description = "CommonRequest DTO로 전달된 데이터를 기반으로 새 사용자를 저장함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "등록 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.member.insert.summary",
         description = "api.member.insert.description"
@@ -103,15 +91,6 @@ public class MemberController {
      */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(summary = "모든 사용자 조회", description = "등록된 모든 사용자 목록을 반환함")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.member.selectAll.summary",
         description = "api.member.selectAll.description"
@@ -143,18 +122,6 @@ public class MemberController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
-    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    /*
-    @Operation(summary = "ID로 사용자 조회", description = "PathVariable로 전달된 ID의 사용자를 반환함")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID"),
-        @ApiResponse(responseCode = "404", description = "사용자 없음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
         summary     = "api.member.selectById.summary",
         description = "api.member.selectById.description"
@@ -199,21 +166,6 @@ public class MemberController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
-    // @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    /*
-    @Operation(
-        summary = "사용자 수정",
-        description = "PathVariable로 전달된 ID의 사용자를, RequestBody로 전달된 데이터로 수정함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "수정 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID 또는 요청"),
-        @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
 	    summary     = "api.member.updateById.summary",
 	    description = "api.member.updateById.description"
@@ -264,21 +216,6 @@ public class MemberController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "사용자 삭제",
-        description = "PathVariable로 전달된 ID의 사용자를 삭제함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "삭제 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID"),
-        @ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
 	    summary     = "api.member.deleteById.summary",
 	    description = "api.member.deleteById.description"

@@ -49,19 +49,6 @@ public class DemoController {
      * Create 권한: ADMIN 만 가능
      */
     @PostMapping
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "새 데모 등록",
-        description = "DemoRequest DTO로 전달된 데이터를 기반으로 새 데모를 저장함",
-		security = @SecurityRequirement(name = "JWT")
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "등록 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DemoResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
     	    summary     = "{api.demo.insert.summary}",
     	    description = "{api.demo.insert.description}",
@@ -101,18 +88,6 @@ public class DemoController {
      * Read 권한: 모두 공개 (인증 없이 접근 가능)
      */
     @GetMapping
-    /*
-    @Operation(
-    		summary = "모든 데모 조회", 
-    		description = "등록된 모든 데모 목록을 반환함"
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = DemoResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
     	    summary     = "{api.demo.selectAll.summary}",
     	    description = "{api.demo.selectAll.description}"
@@ -141,21 +116,6 @@ public class DemoController {
      * Read 권한: 모두 공개 (인증 없이 접근 가능)
      */
     @GetMapping("/{id}")
-    /*
-    @Operation(
-    		summary = "ID로 데모 조회", 
-    		description = "PathVariable로 전달된 ID의 데모를 반환함",
-    		security = @SecurityRequirement(name = "JWT")
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID"),
-        @ApiResponse(responseCode = "404", description = "데모 없음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
     	    summary     = "{api.demo.selectById.summary}",
     	    description = "{api.demo.selectById.description}"
@@ -197,22 +157,6 @@ public class DemoController {
      * Update 권한: ADMIN 만 가능
      */
     @PutMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "데모 수정",
-        description = "PathVariable로 전달된 ID의 데모를, RequestBody로 전달된 데이터로 수정함",
-		security = @SecurityRequirement(name = "JWT")
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "수정 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = DemoResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID 또는 요청"),
-        @ApiResponse(responseCode = "404", description = "데모가 존재하지 않음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
     	    summary     = "{api.demo.updateById.summary}",
     	    description = "{api.demo.updateById.description}",
@@ -263,22 +207,6 @@ public class DemoController {
      * Delete 권한: ADMIN 만 가능
      */
     @DeleteMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    /*
-    @Operation(
-        summary = "데모 삭제",
-        description = "PathVariable로 전달된 ID의 데모를 삭제함",
-		security = @SecurityRequirement(name = "JWT")
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "삭제 성공",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = DemoResponse.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 ID"),
-        @ApiResponse(responseCode = "404", description = "데모가 존재하지 않음"),
-        @ApiResponse(responseCode = "500", description = "서버 에러")
-    })
-    */
     @Operation(
     	    summary     = "{api.demo.deleteById.summary}",
     	    description = "{api.demo.deleteById.description}",

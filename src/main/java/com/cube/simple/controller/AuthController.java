@@ -15,12 +15,12 @@ import com.cube.simple.dto.LoginRequest;
 import com.cube.simple.dto.LoginResponse;
 import com.cube.simple.mapper.read.ReadMemberMapper;
 import com.cube.simple.model.Member;
-import com.cube.simple.util.JwtUtil;
+import com.cube.simple.util.JWTUtil;
+import com.cube.simple.util.SHAUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +36,7 @@ public class AuthController {
     private ReadMemberMapper readMemberMapper;
 
     @Autowired
-    private JwtUtil jwtUtil;
-
-    private final DigestUtils digest = new DigestUtils("SHA-256");
+    private JWTUtil jwtUtil;
 
     @PostMapping("/login")
     @Operation(summary = "{api.auth.summary}", description = "{api.auth.description}")
@@ -52,9 +50,9 @@ public class AuthController {
 
         Member found = readMemberMapper.selectById(request.getId());
 
-        log.info("Check : id {}, password [{}] (found [{}])", request.getId (), digest.digestAsHex(request.getPassword()), found.getPassword ());
+        log.info("Check : id {}, password [{}] (found [{}])", request.getId (), SHAUtil.encrypt(request.getPassword()), found.getPassword ());
 
-        if (Objects.nonNull (found) && !Objects.equals(found.getPassword(), digest.digestAsHex(request.getPassword()))) {
+        if (Objects.nonNull (found) && !Objects.equals(found.getPassword(), SHAUtil.encrypt(request.getPassword()))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{api.responses.unauthorized}");
         }
 
