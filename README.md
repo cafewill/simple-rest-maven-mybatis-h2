@@ -181,7 +181,7 @@ public class MemberInitializer {
          private Long id;
         
          @AESData 
-         private String rname;
+         private String name;
          @AESData
          private String phone;
          // …
