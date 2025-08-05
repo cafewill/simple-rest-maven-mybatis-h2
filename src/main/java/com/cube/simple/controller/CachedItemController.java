@@ -60,8 +60,10 @@ public class CachedItemController {
         @ApiResponse(responseCode = "400", description = "api.item.insert.responses.bad_request"),
         @ApiResponse(responseCode = "500", description = "api.item.insert.responses.error")
     })    
-    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest request) {
-        CommonResponse response = CommonResponse.builder().build();
+    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest <Item> request) {
+    	
+        CommonResponse <Object> response = CommonResponse.builder().build();
+        
         try {
             if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
                 Item candidate = objectMapper.convertValue(request.getData(), Item.class);
@@ -107,6 +109,7 @@ public class CachedItemController {
 		) {
     	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             List<Item> items = cachedItemService.selectAll(page, size, category, search);
             response.setData(items);
@@ -138,7 +141,9 @@ public class CachedItemController {
         @ApiResponse(responseCode = "500", description = "api.item.selectById.responses.error")
     })    
     public ResponseEntity<?> selectById(@PathVariable Long id) {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id)) {
                 response.setCode(ResponseCode.ERROR);
@@ -182,9 +187,10 @@ public class CachedItemController {
     })
     public ResponseEntity<?> updateById(
             @PathVariable Long id,
-            @RequestBody CommonRequest request) {
+            @RequestBody CommonRequest <Item> request) {
 
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
                 response.setCode(ResponseCode.ERROR);

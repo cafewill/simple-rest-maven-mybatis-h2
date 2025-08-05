@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FirebaseUtil
 {
-    static final String CHARSET = "UTF-8";
-	static final String FIREBASE_SERVER = "https://fcm.googleapis.com/fcm/send";
-	static final String FIREBASE_SERVER_KEY = "FIREBASE-SERVER-KEY";
+    private static final String CHARSET = "UTF-8";
+    private static final String FIREBASE_SERVER = "https://fcm.googleapis.com/fcm/send";
+    private static final String FIREBASE_SERVER_KEY = "FIREBASE-SERVER-KEY";
 	
     public static FirebaseCode send (String token, String title, String body)
     {

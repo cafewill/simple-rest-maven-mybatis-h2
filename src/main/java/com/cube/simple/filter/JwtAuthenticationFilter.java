@@ -34,6 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
+        log.info ("Check : header [{}] {}", header);
+
         if (Objects.nonNull(header) && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             try {
@@ -45,7 +47,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(username, null,
                         List.of(new SimpleGrantedAuthority("ROLE_" + role)));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (JwtException e) {
+            } catch (JwtException ex) {
+                log.info ("Check : token [{}] {}", token, ex.getLocalizedMessage());
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid or expired JWT token");
                 return;
             }

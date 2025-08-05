@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +26,8 @@ public class S3Util {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    private final S3Client s3Client;
-
-    public S3Util(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
+    @Autowired
+    private S3Client s3Client;
 
     /**
      * 지정된 prefix 아래 객체 키 리스트 조회

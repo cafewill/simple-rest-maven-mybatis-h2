@@ -44,6 +44,7 @@ Model 에 따른 Mapper, Service 및 Controller 구현
 `com/cube/simple/dto/CommonRequest.java, DemoRequest.java`
 `com/cube/simple/model/Item.java, Demo.java`
 `com/cube/simple/controller/ItemController.java, DemoController.java`
+(Generic 으로 설정된 데이터 검증을 위한 @Valid 활용건)
 
 ```java
 // Model 객체에 Bean Validation Constraint (빈 검증 제약) 설정함
@@ -112,7 +113,7 @@ aes.key=[${profile} AES key]
 * `jwt.expiration`: 토큰 만료 시간(ms)
 * `aes.key`: AES 암호화 키
 
-: AES Key, JWT Secret 생성 : AESUtil.generateKey, JWTUtil.generateSecret
+: 필요시 AES Key, JWT Secret 생성 활용 : AESUtil.generateKey, JWTUtil.generateSecret
 
 ### 2. AWS S3
 

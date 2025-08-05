@@ -14,9 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-/**
-* Spring Boot 3.4.8 환경에서 Request/Response Body를 캐싱하고 로깅하는 필터
-*/
 @Slf4j
 @Component
 public class CachingRequestResponseFilter extends OncePerRequestFilter {
@@ -56,9 +53,6 @@ public class CachingRequestResponseFilter extends OncePerRequestFilter {
      wrappedResponse.copyBodyToResponse();
  }
 
- /**
-  * 캐싱된 요청 Body를 문자열로 추출
-  */
  private String extractRequestBody(ContentCachingRequestWrapper request) {
      byte[] buf = request.getContentAsByteArray();
      if (buf.length == 0) {
@@ -67,9 +61,6 @@ public class CachingRequestResponseFilter extends OncePerRequestFilter {
      return new String(buf, StandardCharsets.UTF_8);
  }
 
- /**
-  * 캐싱된 응답 Body를 문자열로 추출
-  */
  private String extractResponseBody(ContentCachingResponseWrapper response) {
      byte[] buf = response.getContentAsByteArray();
      if (buf.length == 0) {
