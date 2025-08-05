@@ -23,22 +23,62 @@ Model 에 따른 Mapper, Service 및 Controller 구현
 (필요시) Request 및 Response DTO 구현
 
 * **Model 구현 예시**:
-  `com/cube/simple/model/Demo.java`
+`com/cube/simple/model/Demo.java`
 
 * **Request 및 Response DTO 구현 예시**:
-  `com/cube/simple/dto/DemoRequest.java`,
-  `com/cube/simple/dto/DemoResponse.java`
+`com/cube/simple/dto/DemoRequest.java`,
+`com/cube/simple/dto/DemoResponse.java`
 
 * **Mapper 구현 예시 (Read/Write DB 분리 구성)**:
-  `resources/mapper/*/*DemoMapper.xml`,
-  `com/cube/simple/mapper/*/*DemoMapper.java`
+`resources/mapper/*/*DemoMapper.xml`,
+`com/cube/simple/mapper/*/*DemoMapper.java`
 
 * **Service 구현 예시**:
-  `com/cube/simple/service/DemoService.java`
+`com/cube/simple/service/DemoService.java`
 
 * **Controller 구현 예시**:
-  `com/cube/simple/controller/DemoController.java`
-  (Swagger 관련 어노테이션 정보 구현필, 복붙 및 ChatGPT 활용하여 업데이트하면됨)
+`com/cube/simple/controller/DemoController.java`
+(Swagger 관련 어노테이션 정보 구현필, 복붙 및 ChatGPT 활용하여 업데이트하면됨)
+
+* **Validation 구현 예시**:
+`com/cube/simple/dto/CommonRequest.java, DemoRequest.java`
+`com/cube/simple/model/Item.java, Demo.java`
+`com/cube/simple/controller/ItemController.java, DemoController.java`
+
+```java
+// Model 객체에 Bean Validation Constraint (빈 검증 제약) 설정함
+public class Item {
+    
+    @NotNull (message = "가격은 필수입니다.")
+    @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
+    @Max(value = 1000000, message = "가격은 1,000,000 이하이어야 합니다.")
+    private Long price;
+    
+    @NotBlank(message = "이름은 필수입니다.")
+    private String name;
+
+    @NotBlank(message = "카테고리는 필수입니다.")
+    private String category;
+
+    // ... ...
+}
+
+// @Valid 어노테이션 설정한 Generic 타입의 공통 요청 활용 (필요시 DemoRequest 와 같은 추가 커스텀 요청 활용함)
+public class CommonRequest <T> {
+    
+    @Valid
+    @NotNull(message = "Request <T> 는 필수입니다.")
+    private T data;
+    
+    @Builder.Default  
+    private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
+}
+
+// Controller 의 Create 메소드에 @Valid 어노테이션 설정 및 Generic 타입으로 넘어오는 객체를 명시해야 Validation 정상 동작함
+public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest <Item> request) {
+    // ... ...
+}
+```
 
 ## 프로파일(Profile) 설정 안내
 
@@ -71,6 +111,8 @@ aes.key=[${profile} AES key]
 * `jwt.secret`: JWT 서명용 비밀 키
 * `jwt.expiration`: 토큰 만료 시간(ms)
 * `aes.key`: AES 암호화 키
+
+: AES Key, JWT Secret 생성 : AESUtil.generateKey, JWTUtil.generateSecret
 
 ### 2. AWS S3
 

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.CommonResponse;
-import com.cube.simple.dto.LoginRequest;
 import com.cube.simple.dto.LoginData;
+import com.cube.simple.dto.LoginRequest;
 import com.cube.simple.enums.ResponseCode;
 import com.cube.simple.model.Member;
 import com.cube.simple.service.AuthService;

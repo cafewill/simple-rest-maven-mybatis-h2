@@ -61,8 +61,10 @@ public class MemberController {
         @ApiResponse(responseCode = "400", description = "api.member.insert.responses.bad_request"),
         @ApiResponse(responseCode = "500", description = "api.member.insert.responses.error")
     })
-    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest request) {
+    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest <Member> request) {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
         	if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
                 Member candidate = objectMapper.convertValue(request.getData(), Member.class);
@@ -102,7 +104,9 @@ public class MemberController {
         @ApiResponse(responseCode = "500", description = "api.member.selectAll.responses.error")
     })
     public ResponseEntity<?> selectAll() {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             List<Member> members = memberService.selectAll();
             response.setData(members);
@@ -135,7 +139,9 @@ public class MemberController {
         @ApiResponse(responseCode = "500", description = "api.member.selectById.responses.error")
     })
     public ResponseEntity<?> selectById(@PathVariable String id) {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id)) {
                 response.setCode(ResponseCode.ERROR);
@@ -176,11 +182,10 @@ public class MemberController {
 	    @ApiResponse(responseCode = "404", description = "api.member.updateById.responses.not_found"),
 	    @ApiResponse(responseCode = "500", description = "api.member.updateById.responses.error")
 	})
-    public ResponseEntity<?> updateById(
-            @PathVariable String id,
-            @RequestBody CommonRequest request) {
+    public ResponseEntity<?> updateById(@PathVariable String id, @RequestBody CommonRequest <Member> request) {
 
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
                 response.setCode(ResponseCode.ERROR);

@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,8 +59,10 @@ public class DemoController {
 	    @ApiResponse(responseCode = "400", description = "{api.demo.insert.responses.bad_request}"),
 	    @ApiResponse(responseCode = "500", description = "{api.demo.insert.responses.error}")
 	})    
-    public ResponseEntity<?> insert(@Valid @RequestBody DemoRequest request) {
+    public ResponseEntity<?> insert(@Valid @RequestBody DemoRequest <Demo> request) {
+    	
         DemoResponse response = DemoResponse.builder().build();
+
         try {
             if (!Objects.isNull (request) && !Objects.isNull (request.getData())) {
                 Demo candidate = objectMapper.convertValue(request.getData(), Demo.class);
@@ -96,7 +99,9 @@ public class DemoController {
 	    @ApiResponse(responseCode = "500", description = "{api.demo.selectAll.responses.error}")
 	})        
     public ResponseEntity<?> selectAll() {
+    	
         DemoResponse response = DemoResponse.builder().build();
+        
         try {
             List<Demo> demos = demoService.selectAll();
             response.setData(demos);
@@ -126,7 +131,9 @@ public class DemoController {
 	    @ApiResponse(responseCode = "500", description = "{api.demo.selectById.responses.error}")
 	})        
     public ResponseEntity<?> selectById(@PathVariable Long id) {
-        CommonResponse response = CommonResponse.builder().build();
+    	
+        DemoResponse response = DemoResponse.builder().build();
+        
         try {
             if (Objects.isNull(id)) {
                 response.setCode(ResponseCode.ERROR);
@@ -167,11 +174,10 @@ public class DemoController {
 	    @ApiResponse(responseCode = "404", description = "{api.demo.updateById.responses.responses.not_found}"),
 	    @ApiResponse(responseCode = "500", description = "{api.demo.updateById.responses.error}")
 	})        
-    public ResponseEntity<?> updateById(
-            @PathVariable Long id,
-            @RequestBody DemoRequest request) {
+    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody DemoRequest <Demo> request) {
 
         DemoResponse response = DemoResponse.builder().build();
+        
         try {
             if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
                 response.setCode(ResponseCode.ERROR);
@@ -218,7 +224,9 @@ public class DemoController {
 	    @ApiResponse(responseCode = "500", description = "{api.demo.deleteById.responses.error}")
 	})            
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
+    	
         DemoResponse response = DemoResponse.builder().build();
+        
         try {
             if (Objects.isNull(id)) {
                 response.setCode(ResponseCode.ERROR);

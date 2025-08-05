@@ -3,6 +3,7 @@ package com.cube.simple.config;
 
 import java.time.Duration;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableCaching
+@ConditionalOnProperty(name  = "spring.cache.type", havingValue = "redis", matchIfMissing = false)
 public class RedisConfig {
 
     @Bean

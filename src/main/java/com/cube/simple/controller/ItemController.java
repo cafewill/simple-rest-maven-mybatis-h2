@@ -64,8 +64,10 @@ public class ItemController {
         @ApiResponse(responseCode = "400", description = "api.item.insert.responses.bad_request"),
         @ApiResponse(responseCode = "500", description = "api.item.insert.responses.error")
     })    
-    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest request) {
+    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest <Item> request) {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
                 Item candidate = objectMapper.convertValue(request.getData(), Item.class);
@@ -111,6 +113,7 @@ public class ItemController {
 		) {
     	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             List<Item> items = itemService.selectAll(page, size, category, search);
             response.setData(items);
@@ -142,7 +145,9 @@ public class ItemController {
         @ApiResponse(responseCode = "500", description = "api.item.selectById.responses.error")
     })    
     public ResponseEntity<?> selectById(@PathVariable Long id) {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id)) {
                 response.setCode(ResponseCode.ERROR);
@@ -184,11 +189,10 @@ public class ItemController {
         @ApiResponse(responseCode = "404", description = "api.item.updateById.responses.not_found"),
         @ApiResponse(responseCode = "500", description = "api.item.updateById.responses.error")
     })
-    public ResponseEntity<?> updateById(
-            @PathVariable Long id,
-            @RequestBody CommonRequest request) {
+    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody CommonRequest <Item> request) {
 
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
                 response.setCode(ResponseCode.ERROR);
@@ -237,7 +241,9 @@ public class ItemController {
         @ApiResponse(responseCode = "500", description = "api.item.deleteById.responses.error")
     })
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
+    	
         CommonResponse response = CommonResponse.builder().build();
+        
         try {
             if (Objects.isNull(id)) {
                 response.setCode(ResponseCode.ERROR);

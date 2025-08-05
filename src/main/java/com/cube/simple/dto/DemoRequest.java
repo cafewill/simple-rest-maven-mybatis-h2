@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DemoRequest <T> {
 	
-    @Valid
+	@Valid
     @NotNull(message = "Request <T> 는 필수입니다.")
 	private T data;
 
