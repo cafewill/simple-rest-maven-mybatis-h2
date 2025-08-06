@@ -15,14 +15,6 @@ import com.cube.simple.util.SHAUtil;
 @Component
 public class SHACryptoAspect {
 
-    /*
-    private final SHAUtil shaUtil;
-
-    public SHACryptoAspect(SHAUtil shaUtil) {
-        this.shaUtil = shaUtil;
-    }
-    */
-
     @Pointcut("@annotation(com.cube.simple.aspect.SHAEncrypt)")
     private void encryptPointcut() {}
 

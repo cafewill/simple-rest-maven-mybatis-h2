@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 // @Tag(name = "Welcome", description = "루트 접속시 기본 응답 반환함")
 public class WelcomeController {
-	
-    private final MessageSource messageSource;
+
+	@Autowired
+    private MessageSource messageSource;
 
 	@GetMapping ("/")
 	@Operation(

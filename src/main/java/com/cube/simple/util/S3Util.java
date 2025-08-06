@@ -82,8 +82,8 @@ public class S3Util {
                         .key(key)
                     )
                     .asByteArray();
-        } catch (SdkException e) {
-            throw new IOException("S3 다운로드 실패: " + key, e);
+        } catch (SdkException ex) {
+            throw new IOException("S3 다운로드 실패 : " + key, ex);
         }
     }
     

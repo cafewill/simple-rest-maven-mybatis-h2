@@ -1,4 +1,4 @@
-# 캡틴 REST API 템플릿 프로젝트
+# 캡틴 백엔드 템플릿 프로젝트
 
 (진행중이며 임의 변경 및 삭제 될 수 있음)
 
@@ -39,6 +39,14 @@ Model 에 따른 Mapper, Service 및 Controller 구현
 * **Controller 구현 예시**:
 `com/cube/simple/controller/DemoController.java`
 (Swagger 관련 어노테이션 정보 구현필, 복붙 및 ChatGPT 활용하여 업데이트하면됨)
+
+* **Common Request / Response 구현 예시**:
+`com/cube/simple/dto/CommonRequest.java`
+`com/cube/simple/dto/CommonResponse.java`
+(요청 및 응답에 대한 일관성 확보를 위하여 공통 객체를 활용함)
+: 기본은 공통 객체로 처리하된 필요시 LoginRequest, DemoRequest, DemoResponse 등과 같이 커스텀 구현함)
+: 오류 응답시 CommonResponse.data 에 exception 정보 등 상세 정보가 설정되며 개발 환경에서는 common.error.data=true 설정해야 확인 가능함 (운영 환경에서 시스템 환경, 알고리즘 구성 등 민감 정보 노출 방지를 위함)
+: 예시 : "data": "Cannot invoke \"com.cube.simple.model.Member.getPassword()\" because \"found\" is null",
 
 * **Validation 구현 예시**:
 `com/cube/simple/dto/CommonRequest.java, DemoRequest.java`
@@ -288,17 +296,20 @@ public class MemberInitializer {
 
 ### 🔐 API 접근 권한
 
-| API 경로         | 설명          | 인증 필요 | 권한     |
-| -------------- | ----------- | ----- | ------ |
-| `/api/demos`   | Demo 조회 (R) | ❌     | 전체 허용  |
-| `/api/items`   | Item 조회 (R) | ✅     | 사용자 이상 |
-| `/api/*` (CUD) | 생성, 수정, 삭제  | ✅     | 차단됨    |
+| API 경로       | 설명                  | 인증 필요 | 권한     |
+| ------------ | ------------------- | ----- | ------ |
+| `/api/**`    | 전체 생성, 수정, 삭제 (CUD) | ✅     | 관리자 허용 |
+| `/api/items` | Item 조회 (R)         | ✅     | 사용자 이상 |
+| `/api/demos` | Demo 조회 (R)         | ❌     | 모두 허용  |
+
+: 기본은 SecurityConfig.java 에서 관리함
+: 필요시 MemberController.java 에서와 같이 관리자만 @PreAuthorize("hasRole('ADMIN')") 또는 해당 사용자 추가 @PreAuthorize("hasRole('ADMIN') or #id == authentication.name") 설정함
 
 ### 🔒 JWT 관련 정보
 
-* 유틸리티: `JwtUtil.java`
-* 필터: `JwtAuthenticationFilter.java`
-* 보안 설정: `SecurityConfig.java`
+* 유틸리티: `/src/main/java/com/cube/simple/util/JwtUtil.java`
+* 필터: `/src/main/java/com/cube/simple/filter/JwtAuthenticationFilter.java`
+* 보안 설정: `/src/main/java/com/cube/simple/config/SecurityConfig.java`
 
 ### 개인 정보 등 데이터 암복호화 구현 안내
 

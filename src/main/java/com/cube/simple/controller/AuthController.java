@@ -1,8 +1,11 @@
 package com.cube.simple.controller;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,11 +36,17 @@ import lombok.extern.slf4j.Slf4j;
 // @Tag(name = "Auth", description = "사용자 인증 API")
 public class AuthController {
 
+    @Value("${common.error.data:false}")
+    private boolean showErrorData;
+
     @Autowired
     private JWTUtil jwtUtil;
 
     @Autowired
     private AuthService authService;
+
+	@Autowired
+    private MessageSource messageSource;
 
     @PostMapping("/login")
     @Operation(summary = "{api.auth.summary}", description = "{api.auth.description}")
@@ -46,30 +55,29 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "{api.responses.unauthorized}"),
             @ApiResponse(responseCode = "500", description = "{api.responses.error}")
         })
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        log.info("로그인 시도: {}", request.getId());
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, Locale locale) {
+
+    	log.info("Check : login request {}", request.getId());
 
         Member found = authService.selectById(request.getId());
-
-        log.info("Check : id {}, password [{}] (found [{}])", request.getId (), SHAUtil.encrypt(request.getPassword()), found.getPassword ());
-
-        /*
-        if (Objects.nonNull (found) && !Objects.equals(found.getPassword(), SHAUtil.encrypt(request.getPassword()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{api.responses.unauthorized}");
-        }
-        */
+        CommonResponse response = CommonResponse.builder().build();
 
         if (Objects.isNull(found) 
                 || !SHAUtil.equals(request.getPassword(), found.getPassword())) {
-            CommonResponse<Void> errorRes = CommonResponse.<Void>builder()
+        	
+            String detail = messageSource.getMessage("api.responses.unauthorized", null, locale);
+
+        	response = CommonResponse.builder()
                     .code(ResponseCode.UNAUTHORIZED)
-                    .message("UNAUTHORIZED")
-                    .data(null)
+                    .message(ResponseCode.UNAUTHORIZED.getMessage())
+                    .data(showErrorData ? detail : null)
                     .build();
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(errorRes);
+                    .body(response);
         }        
+        
+        log.info("Check : login id {}, password [{}] (found [{}])", request.getId (), SHAUtil.encrypt(request.getPassword()), found.getPassword ());
         
         String token = jwtUtil.generateToken(found.getId(), found.getRole());
 
@@ -79,12 +87,12 @@ public class AuthController {
                 .role(found.getRole())
                 .build();
         
-        CommonResponse<LoginData> successRes = CommonResponse.<LoginData>builder()
+        response = CommonResponse.builder()
                 .code(ResponseCode.SUCCESS)
-                .message("SUCCESS")
+                .message(ResponseCode.SUCCESS.getMessage())
                 .data(payload)
                 .build();
 
-        return ResponseEntity.ok(successRes);
+        return ResponseEntity.ok(response);
     }
 }

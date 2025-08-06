@@ -11,7 +11,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cube.simple.filter.JwtAuthenticationFilter;
+import com.cube.simple.handler.SimpleAccessDeniedHandler;
+import com.cube.simple.handler.SimpleAuthenticationEntryPoint;
 import com.cube.simple.util.JWTUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
+    private final ObjectMapper objectMapper;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    	
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+            SimpleAuthenticationEntryPoint authEntryPoint,
+            SimpleAccessDeniedHandler accessDeniedHandler) throws Exception {
+    
         log.info ("Check : SecurityConfig.filterChain ()");
 
         http
@@ -37,6 +44,9 @@ public class SecurityConfig {
                 .disable())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(authEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/h2-console/**").permitAll()
         	    .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
@@ -53,16 +63,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,	"/api/items").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET,	"/api/members").hasAnyRole("ADMIN")
                 .requestMatchers(HttpMethod.POST,	"/api/members").hasRole("ADMIN")
-                // (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id']
-                // .requestMatchers(HttpMethod.GET,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or #request.getAttribute('id') == authentication.name"))
-                // .requestMatchers(HttpMethod.PUT,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or #request.getAttribute('id') == authentication.name"))
-                // .requestMatchers(HttpMethod.DELETE,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or #request.getAttribute('id') == authentication.name"))
-                // .requestMatchers(HttpMethod.GET,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id'] == authentication.name"))
-                // .requestMatchers(HttpMethod.PUT,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id'] == authentication.name"))
-                // .requestMatchers(HttpMethod.DELETE,	"/api/members/{id}").access(new WebExpressionAuthorizationManager("hasRole('ADMIN') or (#request.getAttribute(T(org.springframework.web.servlet.HandlerMapping).URI_TEMPLATE_VARIABLES_ATTRIBUTE)['id'] == authentication.name"))
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, objectMapper), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

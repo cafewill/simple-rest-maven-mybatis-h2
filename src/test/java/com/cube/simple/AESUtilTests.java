@@ -1,10 +1,6 @@
 package com.cube.simple;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles("local")
 class AESUtilTests {
 
-    @Autowired
-	AESUtil aesUtil;
-
     @Test
 	void contextLoads() {
 	}
@@ -30,6 +23,6 @@ class AESUtilTests {
 	@Test
 	void testAESUtilGenerateKey() throws NoSuchAlgorithmException {
 		
-		log.info ("Check AESUtil.generateKey : {}", aesUtil.generateKey());
+		log.info ("Check AESUtil.generateKey : {}", AESUtil.generateKey());
 	}
 }

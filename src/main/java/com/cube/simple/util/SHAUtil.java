@@ -10,8 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class SHAUtil {
 
+    /**
+     * 외부에서 객체 생성을 방지하기 위한 private 생성자
+     */
     private SHAUtil() {
-        // Utility 클래스이므로 인스턴스화 방지
+        throw new IllegalStateException("Utility class");
     }
 
     /**
@@ -49,9 +52,9 @@ public final class SHAUtil {
                 sb.append(String.format("%02x", b));
             }
             return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            log.error("SHA-256 algorithm not available", e);
-            throw new RuntimeException("SHA-256 암호화 실패", e);
+        } catch (NoSuchAlgorithmException ex) {
+            log.error("SHA-256 algorithm not available", ex);
+            throw new RuntimeException("SHA-256 암호화 실패", ex);
         }
     }
 }

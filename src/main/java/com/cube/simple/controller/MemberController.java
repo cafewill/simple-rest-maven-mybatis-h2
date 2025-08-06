@@ -80,10 +80,10 @@ public class MemberController {
                 log.warn(response.getMessage());
                 return ResponseEntity.badRequest().body(response);
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Insert error : %s", e.getLocalizedMessage()));
-            log.error(response.getMessage(), e);
+            response.setMessage(String.format("Insert error : %s", ex.getLocalizedMessage()));
+            log.error(response.getMessage(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -113,10 +113,10 @@ public class MemberController {
             response.setCode(ResponseCode.SUCCESS);
             response.setMessage(String.format("Select success : %d members", members.size()));
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Select all error", e);
+        } catch (Exception ex) {
+            log.error("Select all error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Select error : %s", e.getLocalizedMessage()));
+            response.setMessage(String.format("Select error : %s", ex.getLocalizedMessage()));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -159,10 +159,10 @@ public class MemberController {
                 response.setMessage(String.format("Select error : member not found for id=%d", id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-        } catch (Exception e) {
-            log.error("Select by id error", e);
+        } catch (Exception ex) {
+            log.error("Select by id error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Select error : %s", e.getLocalizedMessage()));
+            response.setMessage(String.format("Select error : %s", ex.getLocalizedMessage()));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -208,10 +208,10 @@ public class MemberController {
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
-            log.error("Update error", e);
+        } catch (Exception ex) {
+            log.error("Update error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Update error : %s", e.getLocalizedMessage()));
+            response.setMessage(String.format("Update error : %s", ex.getLocalizedMessage()));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -251,10 +251,10 @@ public class MemberController {
             response.setMessage(String.format("Delete success : %s", found));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Delete error", e);
+        } catch (Exception ex) {
+            log.error("Delete error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Delete error : %s", e.getLocalizedMessage()));
+            response.setMessage(String.format("Delete error : %s", ex.getLocalizedMessage()));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

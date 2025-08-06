@@ -15,12 +15,27 @@ import java.util.Objects;
 import com.cube.simple.enums.FirebaseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FirebaseUtil
 {
+	@Getter
+	@Setter
+    private static String serverKey;
+
     private static final String CHARSET = "UTF-8";
     private static final String FIREBASE_SERVER = "https://fcm.googleapis.com/fcm/send";
-    private static final String FIREBASE_SERVER_KEY = "FIREBASE-SERVER-KEY";
 	
+    /**
+     * 외부에서 객체 생성을 방지하기 위한 private 생성자
+     */
+    private FirebaseUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static FirebaseCode send (String token, String title, String body)
     {
     	FirebaseCode status = FirebaseCode.FAILURE;
@@ -33,7 +48,7 @@ public class FirebaseUtil
         	int success = Integer.valueOf (json.get ("success").toString ());
             if (check != success) status = FirebaseCode.FAILURE;
             if (check == success) status = FirebaseCode.SUCCESS;
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
     	
     	return status;
     }
@@ -50,7 +65,7 @@ public class FirebaseUtil
         	int success = Integer.valueOf (json.get ("success").toString ());
             if (check != success) status = FirebaseCode.FAILURE;
             if (check == success) status = FirebaseCode.SUCCESS;
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
     	
     	return status;
     }
@@ -68,7 +83,7 @@ public class FirebaseUtil
             if (0 == success) status = FirebaseCode.FAILURE;
             if (check == success) status = FirebaseCode.SUCCESS;
             if (check > success && 0 < success) status = FirebaseCode.PARTIAL;
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
 
         return status;
     }    
@@ -86,7 +101,7 @@ public class FirebaseUtil
             if (0 == success) status = FirebaseCode.FAILURE;
             if (check == success) status = FirebaseCode.SUCCESS;
             if (check > success && 0 < success) status = FirebaseCode.PARTIAL;
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
 
         return status;
     }    
@@ -98,7 +113,7 @@ public class FirebaseUtil
         try
         {
         	response = exec (token, title, body, null);
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
         
         return response;
     }        
@@ -110,7 +125,7 @@ public class FirebaseUtil
         try
         {
         	response = exec ((Object) token, title, body, link);
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
 
         return response;
     }
@@ -122,7 +137,7 @@ public class FirebaseUtil
         try
         {
         	response = exec (token, title, body, null);
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
 
         return response;
     }    
@@ -134,7 +149,7 @@ public class FirebaseUtil
         try
         {
         	response = exec ((Object) token, title, body, link);
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
 
         return response;
     }    
@@ -163,7 +178,7 @@ public class FirebaseUtil
         	
         	String json = (new ObjectMapper ()).writeValueAsString (request);
             response = post (json);
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (Exception ex) { ex.printStackTrace (); }
 
         return response;
     }
@@ -187,8 +202,8 @@ public class FirebaseUtil
             client.setRequestProperty ("Accept-Charset", CHARSET);
             client.setRequestProperty ("Connection", "keep-alive");
             client.setRequestProperty ("Cache-control", "no-cache");
-            client.setRequestProperty ("Authorization", "key=" + FIREBASE_SERVER_KEY);
-            client.setRequestProperty ("Content-Type", "application/json; Charset=" + CHARSET);
+            client.setRequestProperty ("Authorization", String.format("key=%s", getServerKey ()));
+            client.setRequestProperty ("Content-Type", String.format("application/json; Charset=%s", CHARSET));
         	
             DataOutputStream stream = new DataOutputStream (client.getOutputStream ());
             stream.write (data.getBytes ("UTF-8"));
@@ -198,10 +213,10 @@ public class FirebaseUtil
             BufferedReader reader = new BufferedReader (new InputStreamReader (in));
             StringBuilder out = new StringBuilder();
             String line;
-            while (null != (line = reader.readLine ())) out.append (line);
+            while (Objects.nonNull(line = reader.readLine ())) out.append (line);
             reader.close ();
             response = out.toString ();
-        } catch (Exception e) { e.printStackTrace (); } finally { if (null != client) client.disconnect (); client = null; }
+        } catch (Exception ex) { ex.printStackTrace (); } finally { if (Objects.nonNull(client)) client.disconnect (); client = null; }
         
         return (response);
     }    

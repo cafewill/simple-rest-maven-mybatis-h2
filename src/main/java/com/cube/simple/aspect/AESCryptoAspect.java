@@ -17,12 +17,6 @@ import com.cube.simple.util.AESUtil;
 @Component
 public class AESCryptoAspect {
 
-    private final AESUtil aesUtil;
-
-    public AESCryptoAspect(AESUtil aesUtil) {
-        this.aesUtil = aesUtil;
-    }
-
     // 암호화가 필요한 메서드에 붙이는 어노테이션
     @Pointcut("@annotation(com.cube.simple.aspect.AESEncrypt)")
     private void encryptPointcut() {}
@@ -64,7 +58,7 @@ public class AESCryptoAspect {
                 field.setAccessible(true);
                 Object val = field.get(target);
                 if (val instanceof String) {
-                    String enc = aesUtil.encrypt((String) val);
+                    String enc = AESUtil.encrypt((String) val);
                     field.set(target, enc);
                 }
             },
@@ -82,7 +76,7 @@ public class AESCryptoAspect {
                 field.setAccessible(true);
                 Object val = field.get(target);
                 if (val instanceof String) {
-                    String dec = aesUtil.decrypt((String) val);
+                    String dec = AESUtil.decrypt((String) val);
                     field.set(target, dec);
                 }
             },

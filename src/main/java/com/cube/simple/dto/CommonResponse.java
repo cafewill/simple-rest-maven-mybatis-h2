@@ -21,6 +21,7 @@ public class CommonResponse <T> {
 	
 	private ResponseCode code;
 	private String message;
+	
 	private T data;
 
 	@Builder.Default  
