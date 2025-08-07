@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.cube.simple.filter.JwtAuthenticationFilter;
 import com.cube.simple.handler.SimpleAccessDeniedHandler;
@@ -35,6 +34,7 @@ public class SecurityConfig {
     private ObjectMapper objectMapper;
 
     @Bean
+    // @SuppressWarnings("squid:S4502")
     public SecurityFilterChain filterChain(HttpSecurity http,
             SimpleAuthenticationEntryPoint authEntryPoint,
             SimpleAccessDeniedHandler accessDeniedHandler) throws Exception {
@@ -48,7 +48,7 @@ public class SecurityConfig {
         		.ignoringRequestMatchers("/api/auth/login"))
                 // .disable())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            // .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(authEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler))
