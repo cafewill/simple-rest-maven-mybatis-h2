@@ -65,7 +65,7 @@ public class WelcomeController {
 	    										.code(ResponseCode.SUCCESS)
 	                                            .message(message)
 	                                            .build();
-	    log.info("Check welcome => locale : {}, message : {}", locale, response.getMessage());
+	    log.info("Check welcome => locale : {}", locale);
 	    return ResponseEntity.ok(response);
 	}
 	

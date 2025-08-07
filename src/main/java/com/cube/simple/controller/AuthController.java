@@ -65,7 +65,7 @@ public class AuthController {
 
         if (Objects.isNull(found) 
                 || !shaUtil.equals(request.getPassword(), found.getPassword())) {
-            log.warn("Login failed");
+            log.warn("Check login failed");
         	
             String detail = messageSource.getMessage("api.responses.unauthorized", null, locale);
 
