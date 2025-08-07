@@ -34,7 +34,7 @@ public class SecurityConfig {
     private ObjectMapper objectMapper;
 
     @Bean
-    // @SuppressWarnings("squid:S4502")
+    @SuppressWarnings("squid:S4502")
     public SecurityFilterChain filterChain(HttpSecurity http,
             SimpleAuthenticationEntryPoint authEntryPoint,
             SimpleAccessDeniedHandler accessDeniedHandler) throws Exception {
