@@ -60,13 +60,12 @@ public class AuthController {
         })
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, Locale locale) {
 
-    	log.info("Check : login request {}", request.getId());
-
         Member found = authService.selectById(request.getId());
         CommonResponse response = CommonResponse.builder().build();
 
         if (Objects.isNull(found) 
                 || !shaUtil.equals(request.getPassword(), found.getPassword())) {
+            log.warn("Login failed");
         	
             String detail = messageSource.getMessage("api.responses.unauthorized", null, locale);
 
@@ -79,8 +78,6 @@ public class AuthController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }        
-        
-        log.info("Check : login id {}", request.getId ());
         
         String token = jwtUtil.generateToken(found.getId(), found.getRole());
 

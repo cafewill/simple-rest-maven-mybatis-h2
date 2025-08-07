@@ -70,10 +70,12 @@ public class WelcomeController {
 	}
 	
     private String extractClientIp(HttpServletRequest request) {
+    	
+        String clientIp = request.getRemoteAddr();
         String xfHeader = request.getHeader("X-Forwarded-For");
         if (Objects.nonNull(xfHeader) && !xfHeader.isBlank()) {
-            return xfHeader.split(",")[0].trim();
+        	clientIp = xfHeader.split(",")[0].trim();
         }
-        return request.getRemoteAddr();
+        return clientIp.replaceAll("[\n\r]", "");
     }	
 }
