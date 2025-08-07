@@ -15,6 +15,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import com.cube.simple.filter.JwtAuthenticationFilter;
 import com.cube.simple.handler.SimpleAccessDeniedHandler;
 import com.cube.simple.handler.SimpleAuthenticationEntryPoint;
+import com.cube.simple.util.JWTUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    // @Autowired
-    // private JwtAuthenticationFilter jwtAuthenticationFilter;
+	@Autowired
+	private JWTUtil jwtUtil;
+
+	@Autowired
+    private ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
@@ -38,10 +43,12 @@ public class SecurityConfig {
 
         http
         .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                .disable())
+        		.ignoringRequestMatchers("/h2-console/**")
+        		.ignoringRequestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+        		.ignoringRequestMatchers("/api/auth/login"))
+                // .disable())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(authEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler))
@@ -63,7 +70,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,	"/api/members").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, objectMapper), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
