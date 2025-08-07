@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -17,6 +18,9 @@ import com.cube.simple.util.AESUtil;
 @Component
 public class AESCryptoAspect {
 
+	@Autowired
+	AESUtil aesUtil;
+	
     // 암호화가 필요한 메서드에 붙이는 어노테이션
     @Pointcut("@annotation(com.cube.simple.aspect.AESEncrypt)")
     private void encryptPointcut() {}
@@ -58,7 +62,7 @@ public class AESCryptoAspect {
                 field.setAccessible(true);
                 Object val = field.get(target);
                 if (val instanceof String) {
-                    String enc = AESUtil.encrypt((String) val);
+                    String enc = aesUtil.encrypt((String) val);
                     field.set(target, enc);
                 }
             },
@@ -76,7 +80,7 @@ public class AESCryptoAspect {
                 field.setAccessible(true);
                 Object val = field.get(target);
                 if (val instanceof String) {
-                    String dec = AESUtil.decrypt((String) val);
+                    String dec = aesUtil.decrypt((String) val);
                     field.set(target, dec);
                 }
             },

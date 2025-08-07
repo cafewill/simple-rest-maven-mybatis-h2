@@ -43,6 +43,9 @@ public class AuthController {
     private JWTUtil jwtUtil;
 
     @Autowired
+    private SHAUtil shaUtil;
+
+    @Autowired
     private AuthService authService;
 
 	@Autowired
@@ -63,7 +66,7 @@ public class AuthController {
         CommonResponse response = CommonResponse.builder().build();
 
         if (Objects.isNull(found) 
-                || !SHAUtil.equals(request.getPassword(), found.getPassword())) {
+                || !shaUtil.equals(request.getPassword(), found.getPassword())) {
         	
             String detail = messageSource.getMessage("api.responses.unauthorized", null, locale);
 
@@ -77,7 +80,7 @@ public class AuthController {
                     .body(response);
         }        
         
-        log.info("Check : login id {}, password [{}] (found [{}])", request.getId (), SHAUtil.encrypt(request.getPassword()), found.getPassword ());
+        log.info("Check : login id {}", request.getId ());
         
         String token = jwtUtil.generateToken(found.getId(), found.getRole());
 

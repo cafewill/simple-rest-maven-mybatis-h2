@@ -6,6 +6,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -15,6 +16,9 @@ import com.cube.simple.util.SHAUtil;
 @Component
 public class SHACryptoAspect {
 
+	@Autowired
+	SHAUtil shaUtil;
+	
     @Pointcut("@annotation(com.cube.simple.aspect.SHAEncrypt)")
     private void encryptPointcut() {}
 
@@ -32,7 +36,7 @@ public class SHACryptoAspect {
                 field.setAccessible(true);
                 Object val = field.get(target);
                 if (val instanceof String) {
-                    String enc = SHAUtil.encrypt((String) val);
+                    String enc = shaUtil.encrypt((String) val);
                     field.set(target, enc);
                 }
             },

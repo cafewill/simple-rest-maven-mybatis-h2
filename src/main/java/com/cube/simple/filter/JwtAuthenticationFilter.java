@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.cube.simple.dto.CommonResponse;
@@ -30,14 +31,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
+@Component
+// @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Value("${app.showErrorData:false}")
+    @Value("${common.error.data:false}")
     private boolean showErrorData;
 
-    private final JWTUtil jwtUtil;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private JWTUtil jwtUtil;
+
+    @Autowired
+    private ObjectMapper objectMapper;
     
     @Override
     protected void doFilterInternal(HttpServletRequest request,
