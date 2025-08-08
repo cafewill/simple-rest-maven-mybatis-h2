@@ -23,9 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class FirebaseUtil {
+    private static final String CHARSET = "UTF-8";
 
-    private static final String CHARSET         = "UTF-8";
-    private static final String FIREBASE_SERVER = "https://fcm.googleapis.com/fcm/send";
+    @Value("${firebase.server.url:https://fcm.googleapis.com/fcm/send}")
+    private String firebaseServerUrl;
 
     @Value("${firebase.server.key}")
     private String serverKey;
@@ -150,7 +151,7 @@ public class FirebaseUtil {
      * @throws Exception 네트워크 또는 스트림 처리 실패 시 예외 발생
      */
     private String post(String payload) throws Exception {
-        URL url = new URL(FIREBASE_SERVER);
+        URL url = new URL(firebaseServerUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         try {
             conn.setUseCaches(false);
