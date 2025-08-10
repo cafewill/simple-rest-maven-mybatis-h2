@@ -54,11 +54,6 @@
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-test</artifactId>
-		    <scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
@@ -189,7 +184,8 @@
 		            <exclude>**/*.yml</exclude>
 		        </excludes>
 		    </resource>
-		</resources>		
+		</resources>	
+			
     	<plugins>
 		    <plugin>
 		        <artifactId>maven-resources-plugin</artifactId>
@@ -228,42 +224,76 @@
 	            </configuration>
 	        </plugin>
 
-    <!-- MyBatis Generator -->
-    <!--
     <plugin>
-      <groupId>org.mybatis.generator</groupId>
-      <artifactId>mybatis-generator-maven-plugin</artifactId>
-      <version>1.4.1</version>
-      <configuration>
-        <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
-        <overwrite>true</overwrite>
-      </configuration>
-      <executions>
-        <execution>
-          <id>generate-models</id>
-          <goals><goal>generate</goal></goals>
-        </execution>
-      </executions>
+        <groupId>org.mybatis.generator</groupId>
+        <artifactId>mybatis-generator-maven-plugin</artifactId>
+        <version>1.4.2</version>
+        <configuration>
+            <configurationFile>src/main/resources/mybatis/generatorConfig.xml</configurationFile>
+            <overwrite>true</overwrite>
+            <verbose>true</verbose>
+        </configuration>
+        <dependencies>
+		    <dependency>
+		        <groupId>com.softwareloop</groupId>
+		        <artifactId>mybatis-generator-lombok-plugin</artifactId>
+		        <version>1.0</version>
+		    </dependency>
+		    <dependency>
+		        <groupId>com.h2database</groupId>
+		        <artifactId>h2</artifactId>
+		        <version>2.3.232</version>
+		    </dependency>
+        </dependencies>
+        <!-- 
+        <executions>
+            <execution>
+              <goals><goal>generate</goal></goals>
+            </execution>
+        </executions>
+		-->
     </plugin>
-    -->
+    
+		    <!-- MyBatis Generator -->
+		    <!--
+		    <plugin>
+		      <groupId>org.mybatis.generator</groupId>
+		      <artifactId>mybatis-generator-maven-plugin</artifactId>
+		      <version>1.4.1</version>
+		      <configuration>
+		        <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
+		        <overwrite>true</overwrite>
+		      </configuration>
+		      <executions>
+		        <execution>
+		          <id>generate-models</id>
+		          <goals><goal>generate</goal></goals>
+		        </execution>
+		      </executions>
+		    </plugin>
+		    -->
 
-    <!-- Lombok Annotation 지원 -->
-    <plugin>
-      <groupId>org.bsc.maven</groupId>
-      <artifactId>maven-processor-plugin</artifactId>
-      <version>3.3.3</version>
-      <executions>
-        <execution>
-          <id>process</id>
-          <goals><goal>process</goal></goals>
-          <configuration>
-            <processors>
-              <processor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</processor>
-            </processors>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>        			
+		    <!-- Lombok Annotation 지원 -->
+		    <!--
+				
+		    <plugin>
+		      <groupId>org.bsc.maven</groupId>
+		      <artifactId>maven-processor-plugin</artifactId>
+		      <version>3.3.3</version>
+		      <executions>
+		        <execution>
+		          <id>process</id>
+		          <goals><goal>process</goal></goals>
+		          <configuration>
+		            <processors>
+		              <processor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</processor>
+		            </processors>
+		          </configuration>
+		        </execution>
+		      </executions>
+		    </plugin>        			
+			-->
+
 		</plugins>
 	</build>
 

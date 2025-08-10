@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+  <!-- READ 전용 -->
+  <context id="read" targetRuntime="MyBatis3Simple">
+    <property name="javaFileEncoding" value="UTF-8"/>
+
+    <!-- 1) plugin은 jdbcConnection보다 앞에 둡니다 -->
+	<plugin type="com.softwareloop.mybatis.generator.plugins.LombokPlugin">
+	  <property name="builder" value="true"/>
+	  <property name="accessors" value="true"/>
+	</plugin>
+
+    <jdbcConnection driverClass="org.h2.Driver"
+                    connectionURL="jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_UPPER=false"
+                    userId="sa" password=""/>
+
+    <javaModelGenerator targetPackage="com.example.app.model" targetProject="src/main/resources/mybatis/java">
+      <property name="trimStrings" value="true"/>
+    </javaModelGenerator>
+
+    <sqlMapGenerator targetPackage="mapper.read" targetProject="src/main/resources/mybatis/resources"/>
+    <javaClientGenerator type="XMLMAPPER"
+                         targetPackage="com.example.app.mapper.read"
+                         targetProject="src/main/resources/mybatis/java"/>
+
+    <!-- 2) 쓰기 기능 비활성화 -->
+    <table tableName="%"
+           enableInsert="false"
+           enableUpdateByPrimaryKey="false"
+           enableDeleteByPrimaryKey="false"
+           enableDeleteByExample="false"
+           enableUpdateByExample="false"
+           enableSelectByExample="false">
+      <property name="useActualColumnNames" value="false"/>
+      <columnRenamingRule searchString="^is_" replaceString=""/>
+    </table>
+  </context>
+
+  <!-- WRITE 전용 -->
+  <context id="write" targetRuntime="MyBatis3Simple">
+    <property name="javaFileEncoding" value="UTF-8"/>
+
+	<plugin type="com.softwareloop.mybatis.generator.plugins.LombokPlugin">
+	  <property name="builder" value="true"/>
+	  <property name="accessors" value="true"/>
+	</plugin>
+	<!-- 
+    <plugin type="com.itfsw.mybatis.generator.plugins.LombokPlugin"/>
+    <plugin type="com.itfsw.mybatis.generator.plugins.EnhancedModelPlugin"/>
+    <plugin type="com.itfsw.mybatis.generator.plugins.swagger.EnhancedSwaggerPlugin"/>
+	 -->
+
+    <jdbcConnection driverClass="org.h2.Driver"
+                    connectionURL="jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_UPPER=false"
+                    userId="sa" password=""/>
+
+    <javaModelGenerator targetPackage="com.example.app.model" targetProject="src/main/resources/mybatis/java"/>
+    <sqlMapGenerator targetPackage="mapper.write" targetProject="src/main/resources/mybatis/resources"/>
+    <javaClientGenerator type="XMLMAPPER"
+                         targetPackage="com.example.app.mapper.write"
+                         targetProject="src/main/resources/mybatis/java"/>
+
+    <!-- 읽기 기능 비활성화 -->
+    <table tableName="%"
+           enableSelectByPrimaryKey="false"
+           enableSelectByExample="false">
+      <property name="useActualColumnNames" value="false"/>
+      <columnRenamingRule searchString="^is_" replaceString=""/>
+    </table>
+  </context>
+
+</generatorConfiguration>
