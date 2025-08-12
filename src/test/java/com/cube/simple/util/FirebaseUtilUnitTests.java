@@ -28,8 +28,8 @@ class FirebaseUtilUnitTests {
 
     private HttpServer server;
 
-    private FirebaseUtil createFirebaseUtil(String baseUrl) {
-        FirebaseUtil util = new FirebaseUtil();
+    private FirebaseUtilOld createFirebaseUtil(String baseUrl) {
+        FirebaseUtilOld util = new FirebaseUtilOld();
         ReflectionTestUtils.setField(util, "firebaseServerUrl", baseUrl);
         ReflectionTestUtils.setField(util, "serverKey", "fake-server-key");
         ReflectionTestUtils.setField(util, "objectMapper", new ObjectMapper());
@@ -62,7 +62,7 @@ class FirebaseUtilUnitTests {
     @DisplayName("단일 토큰: success=1 → SUCCESS")
     void sendSingleTokenSuccessOk() throws Exception {
         String url = startMockServerReturning(200, "{\"success\":1}");
-        FirebaseUtil util = createFirebaseUtil(url);
+        FirebaseUtilOld util = createFirebaseUtil(url);
         assertEquals(FirebaseCode.SUCCESS, util.send("t1", "제목", "본문"));
     }
 
@@ -70,7 +70,7 @@ class FirebaseUtilUnitTests {
     @DisplayName("단일 토큰: success=0 → FAILURE")
     void sendSingleTokenFailureOk() throws Exception {
         String url = startMockServerReturning(200, "{\"success\":0}");
-        FirebaseUtil util = createFirebaseUtil(url);
+        FirebaseUtilOld util = createFirebaseUtil(url);
         assertEquals(FirebaseCode.FAILURE, util.send("t1", "제목", "본문", "https://example.com"));
     }
 
@@ -78,7 +78,7 @@ class FirebaseUtilUnitTests {
     @DisplayName("다중 토큰: 모두 성공 → SUCCESS")
     void sendMultiTokenAllSuccessOk() throws Exception {
         String url = startMockServerReturning(200, "{\"success\":3}");
-        FirebaseUtil util = createFirebaseUtil(url);
+        FirebaseUtilOld util = createFirebaseUtil(url);
         assertEquals(FirebaseCode.SUCCESS, util.send(List.of("a","b","c"), "제목", "본문"));
     }
 
@@ -86,7 +86,7 @@ class FirebaseUtilUnitTests {
     @DisplayName("다중 토큰: 일부 성공 → PARTIAL")
     void sendMultiTokenPartialOk() throws Exception {
         String url = startMockServerReturning(200, "{\"success\":2}");
-        FirebaseUtil util = createFirebaseUtil(url);
+        FirebaseUtilOld util = createFirebaseUtil(url);
         assertEquals(FirebaseCode.PARTIAL, util.send(List.of("a","b","c"), "제목", "본문", "https://link"));
     }
 
@@ -94,7 +94,7 @@ class FirebaseUtilUnitTests {
     @DisplayName("다중 토큰: 전부 실패 → FAILURE")
     void sendMultiTokenAllFailureOk() throws Exception {
         String url = startMockServerReturning(200, "{\"success\":0}");
-        FirebaseUtil util = createFirebaseUtil(url);
+        FirebaseUtilOld util = createFirebaseUtil(url);
         assertEquals(FirebaseCode.FAILURE, util.send(List.of("a","b"), "제목", "본문"));
     }
 
@@ -102,7 +102,7 @@ class FirebaseUtilUnitTests {
     @DisplayName("서버 오류(5xx) → FAILURE")
     void sendServerErrorReturnsFailureOk() throws Exception {
         String url = startMockServerReturning(500, "{\"error\":\"boom\"}");
-        FirebaseUtil util = createFirebaseUtil(url);
+        FirebaseUtilOld util = createFirebaseUtil(url);
         assertEquals(FirebaseCode.FAILURE, util.send("t1", "제목", "본문"));
     }
 }

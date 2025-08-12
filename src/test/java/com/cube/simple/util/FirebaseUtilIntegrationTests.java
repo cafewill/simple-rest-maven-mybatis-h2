@@ -58,7 +58,7 @@ class FirebaseUtilIntegrationTests {
     }
 
     @Autowired
-    private FirebaseUtil firebaseUtil;
+    private FirebaseUtilOld firebaseUtil;
 
     private static void handleFcm(HttpExchange exchange) throws IOException {
         byte[] reqBody = readAll(exchange.getRequestBody());

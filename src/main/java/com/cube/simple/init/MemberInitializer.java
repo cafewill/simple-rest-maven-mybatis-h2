@@ -42,21 +42,5 @@ public class MemberInitializer {
             .phone("010-5678-1001")
             .description("일반 권한 사용자")
             .build());
-        memberService.insert(Member.builder()
-            .role("USER")
-            .id("bill")
-            .password("1234")
-            .name("빌")
-            .phone("010-5678-1002")
-            .description("일반 권한 사용자")
-            .build());
-        memberService.insert(Member.builder()
-            .role("USER")
-            .id("steve")
-            .password("1234")
-            .name("스티브")
-            .phone("010-5678-1003")
-            .description("일반 권한 사용자")
-            .build());
     }
 }

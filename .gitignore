@@ -35,3 +35,10 @@ build/
 
 ### Logging ###
 /log/
+
+# GCP/Firebase service account keys
+/src/main/resources/firebase/*.json
+**/firebase/*.json
+*.p12
+*.pem
+
