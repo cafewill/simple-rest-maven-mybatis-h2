@@ -169,6 +169,13 @@
             <version>9.3.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
+            <version>1.4.2</version> 
+            <scope>provided</scope>
+        </dependency>
+    
 	</dependencies>
 
 	<build>
@@ -231,75 +238,45 @@
 	            </configuration>
 	        </plugin>
 
-    <plugin>
-        <groupId>org.mybatis.generator</groupId>
-        <artifactId>mybatis-generator-maven-plugin</artifactId>
-        <version>1.4.2</version>
-        <configuration>
-            <configurationFile>src/main/resources/mybatis/generatorConfig.xml</configurationFile>
-            <overwrite>true</overwrite>
-            <verbose>true</verbose>
-        </configuration>
-        <dependencies>
-		    <dependency>
-		        <groupId>com.softwareloop</groupId>
-		        <artifactId>mybatis-generator-lombok-plugin</artifactId>
-		        <version>1.0</version>
-		    </dependency>
-		    <dependency>
-		        <groupId>com.h2database</groupId>
-		        <artifactId>h2</artifactId>
-		        <version>2.3.232</version>
-		    </dependency>
-        </dependencies>
-        <!-- 
-        <executions>
-            <execution>
-              <goals><goal>generate</goal></goals>
-            </execution>
-        </executions>
-		-->
-    </plugin>
-    
-		    <!-- MyBatis Generator -->
-		    <!--
-		    <plugin>
-		      <groupId>org.mybatis.generator</groupId>
-		      <artifactId>mybatis-generator-maven-plugin</artifactId>
-		      <version>1.4.1</version>
-		      <configuration>
-		        <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
-		        <overwrite>true</overwrite>
-		      </configuration>
-		      <executions>
-		        <execution>
-		          <id>generate-models</id>
-		          <goals><goal>generate</goal></goals>
-		        </execution>
-		      </executions>
-		    </plugin>
-		    -->
-
-		    <!-- Lombok Annotation 지원 -->
-		    <!--
-				
-		    <plugin>
-		      <groupId>org.bsc.maven</groupId>
-		      <artifactId>maven-processor-plugin</artifactId>
-		      <version>3.3.3</version>
-		      <executions>
-		        <execution>
-		          <id>process</id>
-		          <goals><goal>process</goal></goals>
-		          <configuration>
-		            <processors>
-		              <processor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</processor>
-		            </processors>
-		          </configuration>
-		        </execution>
-		      </executions>
-		    </plugin>        			
-			-->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.4.2</version>
+                <configuration>
+                    <configurationFile>src/main/resources/mybatis/generatorConfig.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <verbose>true</verbose>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>        
+        		    <dependency>
+        		        <groupId>com.softwareloop</groupId>
+        		        <artifactId>mybatis-generator-lombok-plugin</artifactId>
+        		        <version>1.0</version>
+        		    </dependency>
+                    <dependency>
+                        <groupId>com.mysql</groupId>
+                        <artifactId>mysql-connector-j</artifactId>
+                        <version>9.3.0</version>
+                    </dependency>		    
+        		    <dependency>
+        		        <groupId>com.h2database</groupId>
+        		        <artifactId>h2</artifactId>
+        		        <version>2.3.232</version>
+        		    </dependency>
+                </dependencies>
+                <!-- 
+                <executions>
+                    <execution>
+                      <goals><goal>generate</goal></goals>
+                    </execution>
+                </executions>
+        		-->
+            </plugin>
 
 		</plugins>
 	</build>
