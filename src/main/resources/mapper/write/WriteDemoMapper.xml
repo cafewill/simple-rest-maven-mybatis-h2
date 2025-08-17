@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cube.simple.mapper.write.WriteDemoMapper">
+
+    <insert id="insert" parameterType="Demo">
+		INSERT INTO Demo (name, image, description) VALUES (#{name}, #{image}, #{description})
+    </insert>
+
+    <update id="update" parameterType="Demo">
+		UPDATE Demo 
+		SET
+		<trim suffixOverrides=",">
+			<if test='name != null'>
+				name = #{name},
+			</if>
+			<if test='image != null'>
+				image = #{image},
+			</if>
+			<if test='description != null'>
+				description = #{description}
+			</if>
+		</trim>
+		WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+		DELETE 
+		FROM Demo
+		WHERE id = #{id}
+    </delete>
+
+</mapper>

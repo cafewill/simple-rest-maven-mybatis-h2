@@ -1,0 +1,8 @@
+{
+    "data" : {
+        "price" : 10100,
+        "name" : "Some item #101",
+        "image" : "https://via.placeholder.com/1024x640?text=101",
+        "description" : "Awesome item here!"
+    }
+}

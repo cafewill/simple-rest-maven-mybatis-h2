@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cube.simple.mapper.write.WriteMemberMapper">
+
+    <insert id="insert" parameterType="Member">
+		INSERT INTO Member (role, id, password, name, phone, description) VALUES (#{role}, #{id}, #{password}, #{name}, #{phone}, #{description})
+    </insert>
+
+    <update id="update" parameterType="Member">
+		UPDATE Member 
+		SET
+		<trim suffixOverrides=",">
+			<if test='role != null'>
+				role = #{role},
+			</if>
+			<if test='password != null'>
+				password = #{password},
+			</if>
+			<if test='name != null'>
+				name = #{name},
+			</if>
+			<if test='phone != null'>
+				phone = #{phone},
+			</if>
+			<if test='description != null'>
+				description = #{description}
+			</if>
+		</trim>
+		WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+		DELETE 
+		FROM Member
+		WHERE id = #{id}
+    </delete>
+
+</mapper>
