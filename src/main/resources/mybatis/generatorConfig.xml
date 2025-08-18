@@ -6,7 +6,7 @@
 <generatorConfiguration>
   <properties resource="mybatis/generator.properties"/>
 
-  <context id="read" targetRuntime="MyBatis3Simple">
+  <context id="read" targetRuntime="MyBatis3Simple" defaultModelType="flat">
     <property name="javaFileEncoding" value="UTF-8"/>
     <property name="autoDelimitKeywords" value="true"/>
     <property name="beginningDelimiter" value="`"/>
@@ -34,21 +34,21 @@
     <sqlMapGenerator targetPackage="mapper/read" targetProject="${gen.resources.dir}"/>
     <javaClientGenerator type="XMLMAPPER" targetPackage="com.cube.simple.mapper.read" targetProject="${gen.java.dir}"/>
 
-    <table schema="jejuyeora" tableName="bookmarks_restaurant" mapperName="ReadBookmarksRestaurantMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="likes_restaurant" mapperName="ReadLikesRestaurantMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="region" mapperName="ReadRegionMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="residence" mapperName="ReadResidenceMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_images" mapperName="ReadRestaurantImagesMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_menus" mapperName="ReadRestaurantMenusMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_reservations" mapperName="ReadRestaurantReservationsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_reviews" mapperName="ReadRestaurantReviewsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_waitings" mapperName="ReadRestaurantWaitingsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurants" mapperName="ReadRestaurantsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurants_categories" mapperName="ReadRestaurantsCategoriesMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="users" mapperName="ReadUsersMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
+    <table schema="jejuyeora" tableName="bookmarks_restaurant" mapperName="ReadBookmarksRestaurantMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="likes_restaurant" mapperName="ReadLikesRestaurantMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="region" mapperName="ReadRegionMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="residence" mapperName="ReadResidenceMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_images" mapperName="ReadRestaurantImagesMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_menus" mapperName="ReadRestaurantMenusMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_reservations" mapperName="ReadRestaurantReservationsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_reviews" mapperName="ReadRestaurantReviewsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_waitings" mapperName="ReadRestaurantWaitingsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurants" mapperName="ReadRestaurantsMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurants_categories" mapperName="ReadRestaurantsCategoriesMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="users" mapperName="ReadUsersMapper" enableInsert="false" enableUpdateByPrimaryKey="false" enableDeleteByPrimaryKey="false"> <property name="useActualColumnNames" value="false"/> </table>
   </context>
 
-  <context id="write" targetRuntime="MyBatis3">
+  <context id="write" targetRuntime="MyBatis3Simple" defaultModelType="flat">
     <property name="javaFileEncoding" value="UTF-8"/>
     <property name="autoDelimitKeywords" value="true"/>
     <property name="beginningDelimiter" value="`"/>
@@ -76,17 +76,17 @@
     <sqlMapGenerator targetPackage="mapper/write" targetProject="${gen.resources.dir}"/>
     <javaClientGenerator type="XMLMAPPER" targetPackage="com.cube.simple.mapper.write" targetProject="${gen.java.dir}"/>
 
-    <table schema="jejuyeora" tableName="bookmarks_restaurant" mapperName="WriteBookmarksRestaurantMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="likes_restaurant" mapperName="WriteLikesRestaurantMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="region" mapperName="WriteRegionMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="residence" mapperName="WriteResidenceMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_images" mapperName="WriteRestaurantImagesMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_menus" mapperName="WriteRestaurantMenusMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_reservations" mapperName="WriteRestaurantReservationsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_reviews" mapperName="WriteRestaurantReviewsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurant_waitings" mapperName="WriteRestaurantWaitingsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurants" mapperName="WriteRestaurantsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="restaurants_categories" mapperName="WriteRestaurantsCategoriesMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
-    <table schema="jejuyeora" tableName="users" mapperName="WriteUsersMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> <columnRenamingRule searchString="^is_" replaceString=""/> </table>
+    <table schema="jejuyeora" tableName="bookmarks_restaurant" mapperName="WriteBookmarksRestaurantMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="likes_restaurant" mapperName="WriteLikesRestaurantMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="region" mapperName="WriteRegionMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="residence" mapperName="WriteResidenceMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_images" mapperName="WriteRestaurantImagesMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_menus" mapperName="WriteRestaurantMenusMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_reservations" mapperName="WriteRestaurantReservationsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_reviews" mapperName="WriteRestaurantReviewsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurant_waitings" mapperName="WriteRestaurantWaitingsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurants" mapperName="WriteRestaurantsMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="restaurants_categories" mapperName="WriteRestaurantsCategoriesMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
+    <table schema="jejuyeora" tableName="users" mapperName="WriteUsersMapper" enableSelectByPrimaryKey="false" enableSelectByExample="false"> <property name="useActualColumnNames" value="false"/> </table>
   </context>
 </generatorConfiguration>

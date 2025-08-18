@@ -12,6 +12,7 @@
     <update id="update" parameterType="Demo">
 		UPDATE Demo 
 		SET
+        update_date = CURRENT_TIMESTAMP,
 		<trim suffixOverrides=",">
 			<if test='name != null'>
 				name = #{name},

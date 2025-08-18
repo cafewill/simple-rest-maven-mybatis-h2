@@ -26,10 +26,9 @@ class FirebaseUtilIntegrationTests {
     @Autowired
     private FirebaseUtil firebaseUtil; // @Autowired로 FirebaseUtil 빈을 주입받습니다.
 
-    // 테스트에 사용할 토큰들을 상수로 관리하여 재사용성과 가독성을 높입니다.
-    private static final String ADMIN_TOKEN = "cxYGJ9CAQPiGNT9eLUYtgk:APA91bFI-OBKHL8HsNO9vccV0rr3IdMiLNA0zObNiDIuL6DmYueSFCpxmzvJnZTjOdDcydhMeU9tyQeLAAWDTzq1YQj9eBhIzPcM437SSxOg8hYxwWmLkHA";
-    private static final String USER_TOKEN = "dDVZ5q8zQuq2qeK913cqh8:APA91bFfygUY2bX6WU-smDYBt3dI5F7R7-OrxKDsnFOnudqFX_543CFAalznyKPJ_SAyHATyKoHSDqvJz4usTdwK62lag5BrEkhktGMchlBbCJdiyOL4000";
-    private static final String OWNER_TOKEN = "e5CG1sbsTMKhYtND84A1Z8:APA91bG9CJzXHypvTN39ITSWNokF9xQfO2CJ2BTzvRV3qgstDQ6fxLOC7cgMPkNqBtOQ0j2JhIfaIFPTJ72va9EvwTYHXTvike5k5YOLYWzl95gXSA3cY_I";
+    private static final String USER_TOKEN = "eCZ7SJP2TUOVz-l5aLglkj:APA91bGcVpakTwP7TtlUcJDQCatCLlTGHgjDD1YYxo8Sd4dGjOIzjdadFak-ZvKZAQWHmcveJRlswYtcqC3BUgxReWnQqXfVvRhtFB9v3deCiKAtTbdzFGw";
+    private static final String OWNER_TOKEN = "fT-Y7VYQRwG86djqTPwbhE:APA91bFZu6iiTYOggwXVwL-8ykHx1hsPksah3Qblrn6wUoEEB_z32T6SCI5raq29S02negwJxX-dfOdFlSKeB7Vt2n27rpncYH3uaCDMDBUIUMFx30Hr3gQ";
+    private static final String ADMIN_TOKEN = "e0bonP1dTtmBiHfFPg8oHY:APA91bGQBW97r_A7OKTjV9oioPL9vK4yiQCC5b2vdq2ZS8TEbOIes0BE6_PS7TBpYU4EeEzW_TsUp6WDdErFpE4o5U57uvgwtOKL5Jpym6JaL-fwgxkcPS4";
 
     private String testTitle;
     private String testBody;
@@ -49,11 +48,14 @@ class FirebaseUtilIntegrationTests {
     @Test
     @DisplayName("단일 토큰으로 FCM 메시지 전송 테스트")
     void testSendSingleToken() {
+    	
+    	String token = ADMIN_TOKEN;
+    	
         // given
-        log.info("단일 전송 테스트 시작: token={}", ADMIN_TOKEN);
+        log.info("단일 전송 테스트 시작: token={}", token);
 
         // when
-        FirebaseCode response = firebaseUtil.send(ADMIN_TOKEN, testTitle, testBody, null, testLink);
+        FirebaseCode response = firebaseUtil.send(token, testTitle, testBody, null, testLink);
 
         // then
         log.info("전송 결과: {}", response);
@@ -64,6 +66,7 @@ class FirebaseUtilIntegrationTests {
     @Test
     @DisplayName("여러 토큰으로 FCM 멀티캐스트 메시지 전송 테스트")
     void testSendMultipleTokens() {
+    	
         // given
         List<String> tokens = Arrays.asList(USER_TOKEN, OWNER_TOKEN, ADMIN_TOKEN);
         log.info("멀티캐스트 전송 테스트 시작: {}개의 토큰", tokens.size());

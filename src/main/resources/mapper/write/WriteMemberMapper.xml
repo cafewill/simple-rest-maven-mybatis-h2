@@ -12,6 +12,7 @@
     <update id="update" parameterType="Member">
 		UPDATE Member 
 		SET
+        update_date = CURRENT_TIMESTAMP,
 		<trim suffixOverrides=",">
 			<if test='role != null'>
 				role = #{role},
