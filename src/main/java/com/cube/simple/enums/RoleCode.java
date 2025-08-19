@@ -1,7 +1,5 @@
 package com.cube.simple.enums;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 public enum RoleCode {
 	
 	// 추가 또는 변경시 SecurityConfig, SecurityExpressions 및 @PreAuthorize 사용된 코드도 함께 리뷰필!

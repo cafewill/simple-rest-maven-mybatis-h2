@@ -2,10 +2,6 @@ package com.cube.simple.model;
 
 import java.time.LocalDateTime;
 
-import com.cube.simple.aspect.AESData;
-import com.cube.simple.aspect.SHAData;
-import com.cube.simple.enums.RoleCode;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

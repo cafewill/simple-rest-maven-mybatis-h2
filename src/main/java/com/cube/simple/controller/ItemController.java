@@ -1,7 +1,6 @@
 package com.cube.simple.controller;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +19,9 @@ import com.cube.simple.dto.CommonRequest;
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.enums.ResponseCode;
 import com.cube.simple.model.Item;
-import com.cube.simple.service.CachedItemService;
 import com.cube.simple.service.ItemService;
+// ADDED: Messages utility for i18n
+import com.cube.simple.util.Messages;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +30,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+// ADDED: Tag annotation for Swagger UI grouping
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,93 +39,105 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/items")
 @SecurityRequirement(name = "JWT")
+@Tag(name = "{api.operations.entity.item}")
 // @Tag(name = "Items", description = "아이템 CRUD API")
 public class ItemController {
-    
-    @Autowired
-    private ObjectMapper objectMapper;
-    
-    @Autowired
-    private ItemService itemService;
 
-    @Autowired
-    private CachedItemService cachedItemService;
+    // ADDED: Constants for i18n messages
+    private static final String ENTITY_KEY   = "api.operations.entity.item";
+    private static final String ENTITY_TOKEN = "{api.operations.entity.item}";
+
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private ItemService itemService;
+    // ADDED: Injected Messages service
+    @Autowired private Messages messages;
 
     /**
      * Create 권한: ADMIN만 가능
      */
     @PostMapping
+    // CHANGED: Standardized Swagger annotations
     @Operation(
-        summary     = "api.item.insert.summary",
-        description = "api.item.insert.description"
+        summary     = "{api.operations.insert.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.insert.description|" + ENTITY_TOKEN + "}",
+        security    = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.item.insert.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "api.item.insert.responses.bad_request"),
-        @ApiResponse(responseCode = "500", description = "api.item.insert.responses.error")
-    })    
-    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest <Item> request) {
-    	
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.insert.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "{api.operations.insert.responses.bad_request}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.insert.responses.error}")
+    })
+    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest<Item> request) {
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
-                Item candidate = objectMapper.convertValue(request.getData(), Item.class);
-                itemService.insert(candidate);
-                response.setData(candidate);
-                response.setCode(ResponseCode.SUCCESS);
-                response.setMessage(String.format("Insert success : %s", candidate));
-                log.info(response.getMessage());
-                return ResponseEntity.ok(response);
-            } else {
+            if (request == null || request.getData() == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Insert error : invalid request %s", request));
-                log.warn(response.getMessage());
+                // CHANGED: Use i18n message
+                response.setMessage(messages.get("api.operations.insert.responses.bad_request"));
                 return ResponseEntity.badRequest().body(response);
             }
+            Item candidate = objectMapper.convertValue(request.getData(), Item.class);
+            itemService.insert(candidate);
+
+            response.setData(candidate);
+            response.setCode(ResponseCode.SUCCESS);
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.insert.responses.ok", ENTITY_KEY));
+            log.info(response.getMessage());
+            return ResponseEntity.ok(response);
+
         } catch (Exception ex) {
+            log.error("Insert error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Insert error : %s", ex.getLocalizedMessage()));
-            log.error(response.getMessage(), ex);
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.insert.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    
+
     /**
      * Read 권한: USER, ADMIN 가능
      */
     @GetMapping
+    // CHANGED: Standardized Swagger annotations
     @Operation(
-        summary     = "api.item.selectAll.summary",
-        description = "api.item.selectAll.description"
+        summary     = "{api.operations.select.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.select.description|" + ENTITY_TOKEN + "}",
+        security    = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.item.selectAll.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "500", description = "api.item.selectAll.responses.error")
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.select.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "500", description = "{api.operations.select.responses.error}")
     })
     public ResponseEntity<?> selectAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String search
-		) {
-    	
+            @RequestParam(required = false) String search) {
+
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
             List<Item> items = itemService.selectAll(page, size, category, search);
             response.setData(items);
             response.setCode(ResponseCode.SUCCESS);
-            response.setMessage(String.format("Select success : %d items", items.size()));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.select.responses.ok", ENTITY_KEY));
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
             log.error("Select all error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Select error : %s", ex.getLocalizedMessage()));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.select.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -132,43 +146,43 @@ public class ItemController {
      * Read by ID 권한: USER, ADMIN 가능
      */
     @GetMapping("/{id}")
+    // CHANGED: Standardized Swagger annotations
     @Operation(
-        summary     = "api.item.selectById.summary",
-        description = "api.item.selectById.description"
+        summary     = "{api.operations.select.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.select.description|" + ENTITY_TOKEN + "}",
+        security    = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.item.selectById.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "api.item.selectById.responses.bad_request"),
-        @ApiResponse(responseCode = "404", description = "api.item.selectById.responses.not_found"),
-        @ApiResponse(responseCode = "500", description = "api.item.selectById.responses.error")
-    })    
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.select.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "404", description = "{api.operations.select.responses.not_found|" + ENTITY_TOKEN + "}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.select.responses.error}")
+    })
     public ResponseEntity<?> selectById(@PathVariable Long id) {
-    	
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            if (Objects.isNull(id)) {
-                response.setCode(ResponseCode.ERROR);
-                response.setMessage("Select error : id is null");
-                return ResponseEntity.badRequest().body(response);
-            }
-            Item item = itemService.selectById(id);
-            if (Objects.nonNull(item)) {
-                response.setData(item);
+            Item found = itemService.selectById(id);
+            if (found != null) {
+                response.setData(found);
                 response.setCode(ResponseCode.SUCCESS);
-                response.setMessage(String.format("Select success : %s", item));
+                // CHANGED: Use i18n message
+                response.setMessage(messages.get("api.operations.select.responses.ok", ENTITY_KEY));
                 return ResponseEntity.ok(response);
             } else {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Select error : item not found for id=%d", id));
+                // CHANGED: Use i18n message
+                response.setMessage(messages.get("api.operations.select.responses.not_found", ENTITY_KEY));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (Exception ex) {
             log.error("Select by id error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Select error : %s", ex.getLocalizedMessage()));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.select.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -177,32 +191,38 @@ public class ItemController {
      * Update 권한: ADMIN만 가능
      */
     @PutMapping("/{id}")
+    // CHANGED: Standardized Swagger annotations
     @Operation(
-        summary     = "api.item.updateById.summary",
-        description = "api.item.updateById.description"
+        summary     = "{api.operations.update.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.update.description|" + ENTITY_TOKEN + "}",
+        security    = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.item.updateById.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "api.item.updateById.responses.bad_request"),
-        @ApiResponse(responseCode = "404", description = "api.item.updateById.responses.not_found"),
-        @ApiResponse(responseCode = "500", description = "api.item.updateById.responses.error")
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.update.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "{api.operations.update.responses.bad_request}"),
+        @ApiResponse(responseCode = "404", description = "{api.operations.update.responses.not_found|" + ENTITY_TOKEN + "}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.update.responses.error}")
     })
-    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody CommonRequest <Item> request) {
-
+    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody CommonRequest<Item> request) {
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
+            if (id == null || request == null || request.getData() == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage("Update error : invalid id or request");
+                // CHANGED: Use i18n message
+                response.setMessage(messages.get("api.operations.update.responses.bad_request"));
                 return ResponseEntity.badRequest().body(response);
             }
+
             Item found = itemService.selectById(id);
-            if (Objects.isNull(found)) {
+            if (found == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Update error : no item for id=%d", id));
+                // CHANGED: Use i18n message
+                response.setMessage(messages.get("api.operations.update.responses.not_found", ENTITY_KEY));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
@@ -212,14 +232,16 @@ public class ItemController {
 
             response.setData(candidate);
             response.setCode(ResponseCode.SUCCESS);
-            response.setMessage(String.format("Update success : %s", candidate));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.update.responses.ok", ENTITY_KEY));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
         } catch (Exception ex) {
             log.error("Update error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Update error : %s", ex.getLocalizedMessage()));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.update.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -228,44 +250,45 @@ public class ItemController {
      * Delete 권한: ADMIN만 가능
      */
     @DeleteMapping("/{id}")
+    // CHANGED: Standardized Swagger annotations
     @Operation(
-        summary     = "api.item.deleteById.summary",
-        description = "api.item.deleteById.description"
+        summary     = "{api.operations.delete.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.delete.description|" + ENTITY_TOKEN + "}",
+        security    = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.item.deleteById.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "api.item.deleteById.responses.bad_request"),
-        @ApiResponse(responseCode = "404", description = "api.item.deleteById.responses.not_found"),
-        @ApiResponse(responseCode = "500", description = "api.item.deleteById.responses.error")
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.delete.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "404", description = "{api.operations.delete.responses.not_found|" + ENTITY_TOKEN + "}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.delete.responses.error}")
     })
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
-    	
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            if (Objects.isNull(id)) {
-                response.setCode(ResponseCode.ERROR);
-                response.setMessage("Delete error : id is null");
-                return ResponseEntity.badRequest().body(response);
-            }
             Item found = itemService.selectById(id);
-            if (Objects.isNull(found)) {
+            if (found == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Delete error : no item for id=%d", id));
+                // CHANGED: Use i18n message
+                response.setMessage(messages.get("api.operations.delete.responses.not_found", ENTITY_KEY));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
             itemService.deleteById(id);
             response.setData(found);
             response.setCode(ResponseCode.SUCCESS);
-            response.setMessage(String.format("Delete success : %s", found));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.delete.responses.ok", ENTITY_KEY));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
+
         } catch (Exception ex) {
             log.error("Delete error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Delete error : %s", ex.getLocalizedMessage()));
+            // CHANGED: Use i18n message
+            response.setMessage(messages.get("api.operations.delete.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

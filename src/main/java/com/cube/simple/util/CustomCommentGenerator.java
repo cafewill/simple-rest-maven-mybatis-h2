@@ -2,10 +2,13 @@ package com.cube.simple.util;
 
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.InnerClass;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.api.dom.xml.XmlElement;
-import org.mybatis.generator.internal.util.StringUtility;
 import org.mybatis.generator.internal.DefaultCommentGenerator;
+import org.mybatis.generator.internal.util.StringUtility;
 
 public class CustomCommentGenerator extends DefaultCommentGenerator {
 

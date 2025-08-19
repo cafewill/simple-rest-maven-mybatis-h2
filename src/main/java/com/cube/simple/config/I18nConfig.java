@@ -1,9 +1,14 @@
 package com.cube.simple.config;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,73 +16,130 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * 국제화(i18n) 설정.
- * - 메시지 번들 경로 및 인코딩 지정
- * - 기본 Locale 지정 (세션 기반)
- * - 요청 파라미터(lang)로 Locale 변경 허용
- * - 위 인터셉터를 MVC 체인에 등록
- */
-@Slf4j
 @Configuration
 public class I18nConfig {
 
-	/**
-	 * 메시지 소스 설정.
-	 * - classpath: i18n/messages_*.properties 를 읽는다.
-	 *   예) i18n/messages_ko.properties, i18n/messages_en.properties
-	 * - UTF-8 인코딩 사용
-	 * - 시스템 로케일로의 자동 폴백 비활성화(명시적 번들이 없으면 코드 그대로 노출)
-	 * - cacheSeconds: 개발 중 메시지 파일 변경을 빠르게 반영(운영에선 0 또는 적절히 조정)
-	 */
-	@Bean
-	public ResourceBundleMessageSource messageSource() {
-		ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
-		ms.setBasename("i18n/messages");   // 메시지 번들 기본 이름(prefix)
-		ms.setDefaultEncoding("UTF-8");    // 프로퍼티 파일 인코딩
-		ms.setFallbackToSystemLocale(false); // OS/서버 기본 로케일로 자동 폴백하지 않음
-		ms.setCacheSeconds(10);            // 10초 캐시(개발 편의). 운영은 필요 시 0/무제한 등 조정
-		return ms;
-	}
+    // ===== 메시지 소스 =====
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
+        // NOTE: classpath 루트에 i18n/messages_xx.properties 파일이 있어야 합니다.
+        ms.setBasename("i18n/messages");
+        ms.setDefaultEncoding("UTF-8");
+        ms.setFallbackToSystemLocale(false);
+        ms.setCacheSeconds(10);
+        return ms;
+    }
 
-	/**
-	 * Locale 보관 전략.
-	 * - 세션에 사용자의 Locale을 저장/유지한다.
-	 * - 기본 Locale은 한국어.
-	 *   (쿠키 기반을 원하면 CookieLocaleResolver 사용,
-	 *    완전 무상태 API면 AcceptHeaderLocaleResolver 고려)
-	 */
-	@Bean
-	public LocaleResolver localeResolver() {
-		SessionLocaleResolver slr = new SessionLocaleResolver();
-		slr.setDefaultLocale(Locale.KOREAN); // 기본 로케일: ko
-		return slr;
-	}
+    // ===== Locale 설정 (세션 + ?lang=) =====
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(Locale.KOREAN);
+        return slr;
+    }
 
-	/**
-	 * Locale 변경 인터셉터.
-	 * - 요청 파라미터 `lang` 값으로 Locale을 변경한다.
-	 *   예) /welcome?lang=en, /welcome?lang=ko
-	 */
-	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
-		LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-		lci.setParamName("lang"); // 파라미터 이름
-		return lci;
-	}
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        lci.setParamName("lang");
+        return lci;
+    }
 
-	/**
-	 * 위 LocaleChangeInterceptor 를 MVC 인터셉터 체인에 등록.
-	 */
-	@Bean
-	public WebMvcConfigurer localeInterceptorConfig(LocaleChangeInterceptor lci) {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addInterceptors(InterceptorRegistry reg) {
-				reg.addInterceptor(lci);
-			}
-		};
-	}
+    @Bean
+    public WebMvcConfigurer localeInterceptorConfig(LocaleChangeInterceptor lci) {
+        return new WebMvcConfigurer() {
+            @Override public void addInterceptors(InterceptorRegistry reg) {
+                reg.addInterceptor(lci);
+            }
+        };
+    }
+
+    // ===== OpenAPI i18n 커스터마이저 (중첩 토큰 지원) =====
+    private static final Pattern TOKEN =
+        Pattern.compile("\\{\\s*([\\w\\.]+)\\s*(?:\\|\\s*([^{}]*?)\\s*)?\\}");
+    private static final int MAX_DEPTH = 5; // 무한루프 방지
+
+    private static String unquote(String s) {
+        if (s == null) return null;
+        s = s.trim();
+        if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'")))
+            return s.substring(1, s.length() - 1);
+        return s;
+    }
+    private static boolean hasToken(String s) { return s != null && TOKEN.matcher(s).find(); }
+
+    private static String resolveAll(MessageSource ms, String text, Locale locale) {
+        if (text == null || text.isEmpty()) return text;
+        String current = text;
+        for (int depth = 0; depth < MAX_DEPTH && hasToken(current); depth++) {
+            StringBuffer sb = new StringBuffer();
+            Matcher m = TOKEN.matcher(current);
+            while (m.find()) {
+                String code = m.group(1);
+                String argsStr = m.group(2);
+                String[] args = (argsStr == null || argsStr.isBlank())
+                                ? new String[0]
+                                : java.util.Arrays.stream(argsStr.split("\\|"))
+                                  .map(String::trim)
+                                  .map(I18nConfig::unquote)
+                                  .map(arg -> resolveAll(ms, arg, locale)) // ★ 인자도 재귀 치환
+                                  .toArray(String[]::new);
+
+                String replacement = ms.getMessage(code, args, code, locale);
+                replacement = Matcher.quoteReplacement(replacement);
+                m.appendReplacement(sb, replacement);
+            }
+            m.appendTail(sb);
+            current = sb.toString();
+        }
+        return current;
+    }
+
+    @Bean
+    public OpenApiCustomizer openApiI18nCustomizer(MessageSource messageSource) {
+        return openApi -> {
+            Locale locale = LocaleContextHolder.getLocale();
+
+            // ================================================================
+            //      ADDED: 태그(Tag) 이름 다국어 처리 로직 추가
+            // ================================================================
+            if (openApi.getTags() != null) {
+                openApi.getTags().forEach(tag ->
+                    tag.setName(resolveAll(messageSource, tag.getName(), locale))
+                );
+            }
+
+            // (기존 코드) Paths 및 Operations 다국어 처리
+            if (openApi.getPaths() != null) {
+                openApi.getPaths().forEach((path, item) ->
+                    item.readOperations().forEach(op -> {
+                        op.setSummary(    resolveAll(messageSource, op.getSummary(),     locale));
+                        op.setDescription(resolveAll(messageSource, op.getDescription(), locale));
+
+                        if (op.getResponses() != null) {
+                            op.getResponses().forEach((code, resp) ->
+                                resp.setDescription(resolveAll(messageSource, resp.getDescription(), locale)));
+                        }
+                        if (op.getParameters() != null) {
+                            op.getParameters().forEach(param ->
+                                param.setDescription(resolveAll(messageSource, param.getDescription(), locale)));
+                        }
+                        if (op.getRequestBody() != null && op.getRequestBody().getDescription() != null) {
+                            op.getRequestBody().setDescription(
+                                resolveAll(messageSource, op.getRequestBody().getDescription(), locale));
+                        }
+                    })
+                );
+            }
+
+            // (기존 코드) API 정보(Info) 다국어 처리
+            if (openApi.getInfo() != null) {
+                openApi.getInfo().setTitle(
+                    resolveAll(messageSource, openApi.getInfo().getTitle(), locale));
+                openApi.getInfo().setDescription(
+                    resolveAll(messageSource, openApi.getInfo().getDescription(), locale));
+            }
+        };
+    }
 }
