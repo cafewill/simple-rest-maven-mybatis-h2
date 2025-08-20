@@ -12,9 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import com.cube.simple.util.JWTUtil;
 import com.cube.simple.util.MessageUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -69,6 +67,7 @@ public class SwaggerConfig {
 
         // 문서 정보 + JWT 보안 스킴 추가
         return new OpenAPI()
+            .addServersItem(new io.swagger.v3.oas.models.servers.Server().url("/").description("Same origin"))
             .info(new Info()
                 .title(title)
                 .version(version)

@@ -35,6 +35,13 @@ public class JWTUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
+    /**
+     * refresh 토큰 만료 기간(밀리초 단위)
+     */
+    @Getter
+    @Value("${jwt.refresh-expiration}")
+    private long refreshExpiration;
+
     // 실제 서명/검증에 사용할 Key 객체
     private Key signingKey;
 
@@ -75,6 +82,27 @@ public class JWTUtil {
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                // Key 객체와 알고리즘을 지정하여 서명
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    /**
+     * 사용자명(username)과 권한(role)을 포함하는 JWT 토큰을 생성합니다.
+     *
+     * @param email 토큰의 Subject(주체)로 사용될 사용자명
+     * @param role     토큰의 Claim으로 포함될 사용자 권한
+     * @return 서명된 JWT 문자열
+     */
+    public String generateRefreshToken(String email, String role) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + refreshExpiration);
+
+        return Jwts.builder()
+                .setSubject(email)
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(exp)

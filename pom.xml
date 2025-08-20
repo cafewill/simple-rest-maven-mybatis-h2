@@ -176,6 +176,12 @@
             <scope>provided</scope>
         </dependency>
     
+        <!-- 20250820 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+    
 	</dependencies>
 
 	<build>

@@ -12,7 +12,7 @@ import com.cube.simple.service.MemberService;
 
 import jakarta.annotation.PostConstruct;
 
-@Profile("local")
+@Profile({"local", "develop"})
 @Component
 public class MemberInitializer {
 

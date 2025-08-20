@@ -9,9 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Redis 캐시 설정
@@ -25,6 +28,42 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis", matchIfMissing = false)
 public class RedisConfig {
 
+    private ObjectMapper redisObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+        objectMapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return objectMapper;
+    }
+
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration() {
+        var serializer = new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(redisObjectMapper());
+
+        return RedisCacheConfiguration.defaultCacheConfig()
+            .serializeKeysWith(
+                org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair
+                    .fromSerializer(new org.springframework.data.redis.serializer.StringRedisSerializer()))
+            .serializeValuesWith(
+                org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair
+                    .fromSerializer(serializer));
+    }
+
+    // (선택) RedisTemplate도 동일한 매퍼 적용
+    /*
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory cf) {
+        var template = new RedisTemplate<String, Object>();
+        template.setConnectionFactory(cf);
+        template.setKeySerializer(new StringRedisSerializer());
+        var valueSer = new GenericJackson2JsonRedisSerializer(redisObjectMapper());
+        template.setValueSerializer(valueSer);
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(valueSer);
+        template.afterPropertiesSet();
+        return template;
+    }
+    */
+    
     /**
      * Redis 캐시 공통 설정
      * - 키 직렬화: String (사람이 읽기 쉬움, CLI에서도 명확)
