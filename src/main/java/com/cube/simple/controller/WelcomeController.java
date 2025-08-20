@@ -5,7 +5,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cube.simple.dto.WelcomeResponse;
 import com.cube.simple.enums.ResponseCode;
+import com.cube.simple.util.MessageUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,11 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+// @Tag(name = "{api.operations.entity.welcome}")
 // @Tag(name = "Welcome", description = "루트 접속시 기본 응답 반환함")
 public class WelcomeController {
 
-	@Autowired
-    private MessageSource messageSource;
+    @Autowired 
+    private MessageUtil messages;
 
 	@GetMapping ("/")
 	@Operation(
@@ -59,7 +60,7 @@ public class WelcomeController {
 	public ResponseEntity<?> welcome(HttpServletRequest request, Locale locale) {
 		
 	    String clientIp = extractClientIp(request);
-        String message = messageSource.getMessage("welcome", new Object[]{clientIp}, locale);
+        String message = messages.get("welcome", new Object[]{clientIp});
 
 	    WelcomeResponse<?> response = WelcomeResponse.builder()
 	    										.code(ResponseCode.SUCCESS)

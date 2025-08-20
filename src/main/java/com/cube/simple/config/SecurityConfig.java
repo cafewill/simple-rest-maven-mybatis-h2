@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +24,7 @@ import com.cube.simple.filter.JwtAuthenticationFilter; // JWT 검증 필터
 import com.cube.simple.handler.SimpleAccessDeniedHandler; // 403
 import com.cube.simple.handler.SimpleAuthenticationEntryPoint; // 401
 import com.cube.simple.util.JWTUtil;
+import com.cube.simple.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,8 @@ public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper;
-    private final MessageSource messageSource;
+    
+    private final MessageUtil messages;
 
     // --- CORS 프로퍼티 (환경별로 유연하게 관리) ---
     @Value("${cors.allowed-origins:http://localhost:8080}")
@@ -131,7 +132,7 @@ public class SecurityConfig {
 
             // JWT 필터 등록: UsernamePasswordAuthenticationFilter 이전
             .addFilterBefore(
-                new JwtAuthenticationFilter(jwtUtil, objectMapper, messageSource),
+                new JwtAuthenticationFilter(jwtUtil, objectMapper, messages),
                 UsernamePasswordAuthenticationFilter.class
             );
 

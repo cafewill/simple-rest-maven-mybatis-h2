@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +19,7 @@ import com.cube.simple.enums.ResponseCode;
 import com.cube.simple.model.Member;
 import com.cube.simple.service.AuthService;
 import com.cube.simple.util.JWTUtil;
+import com.cube.simple.util.MessageUtil;
 import com.cube.simple.util.SHAUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+// @Tag(name = "{api.operations.entity.auth}")
 // @Tag(name = "Auth", description = "사용자 인증 API")
 public class AuthController {
 
@@ -48,8 +49,8 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-	@Autowired
-    private MessageSource messageSource;
+    @Autowired 
+    private MessageUtil messages;
 
     @PostMapping("/login")
     @Operation(summary = "{api.auth.summary}", description = "{api.auth.description}")
@@ -70,7 +71,7 @@ public class AuthController {
         	
         	response = CommonResponse.builder()
                     .code(ResponseCode.UNAUTHORIZED)
-                    .message(messageSource.getMessage("api.response.unauthorized", null, locale))
+                    .message(messages.get("api.response.unauthorized"))
                     .data(showErrorData ? ResponseCode.UNAUTHORIZED.getMessage() : null)
                     .build();
             return ResponseEntity
@@ -88,7 +89,7 @@ public class AuthController {
         
         response = CommonResponse.builder()
                 .code(ResponseCode.SUCCESS)
-                .message(messageSource.getMessage("api.response.authorized", null, locale))
+                .message(messages.get("api.response.authorized"))
                 .data(payload)
                 .build();
 

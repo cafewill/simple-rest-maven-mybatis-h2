@@ -1,7 +1,6 @@
 package com.cube.simple.controller;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +21,8 @@ import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.enums.ResponseCode;
 import com.cube.simple.model.Device;
 import com.cube.simple.service.DeviceService;
+// ADDED: Messages dependency for i18n
+import com.cube.simple.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,14 +38,18 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/devices")
 @SecurityRequirement(name = "JWT")
-// @Tag(name = "Devices", description = "알림 토큰 CRUD API")
+// @Tag(name = "api.operations.entity.device")
+//@Tag(name = "Devices", description = "알림 토큰 CRUD API")
 public class DeviceController {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private static final String ENTITY_TOKEN = "{api.operations.entity.device}";
 
-    @Autowired
+    @Autowired 
+    private ObjectMapper objectMapper;
+    @Autowired 
     private DeviceService deviceService;
+    @Autowired 
+    private MessageUtil messages;
 
     /**
      * Create 권한: ADMIN만 가능
@@ -52,72 +57,74 @@ public class DeviceController {
     @PostMapping
     @PreAuthorize(SecurityExpressions.HAS_ROLE_ADMIN)
     @Operation(
-        summary     = "api.device.insert.summary",
-        description = "api.device.insert.description"
+        summary     = "{api.operations.insert.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.insert.description|" + ENTITY_TOKEN + "}"
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.device.insert.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "api.device.insert.responses.bad_request"),
-        @ApiResponse(responseCode = "500", description = "api.device.insert.responses.error")
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.insert.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "{api.operations.insert.responses.bad_request}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.insert.responses.error}")
     })
-    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest <Device> request) {
-    	
+    public ResponseEntity<?> insert(@Valid @RequestBody CommonRequest<Device> request) {
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-        	if (Objects.nonNull (request) && Objects.nonNull (request.getData())) {
-                Device candidate = objectMapper.convertValue(request.getData(), Device.class);
-                deviceService.insert(candidate);
-                response.setData(candidate);
-                response.setCode(ResponseCode.SUCCESS);
-                response.setMessage(String.format("Insert success : %s", candidate));
-                log.info(response.getMessage());
-                return ResponseEntity.ok(response);
-            } else {
+            if (request == null || request.getData() == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Insert error : invalid request %s", request));
-                log.warn(response.getMessage());
+                response.setMessage(messages.get("api.operations.insert.responses.bad_request"));
                 return ResponseEntity.badRequest().body(response);
             }
+            Device candidate = objectMapper.convertValue(request.getData(), Device.class);
+            deviceService.insert(candidate);
+
+            response.setData(candidate);
+            response.setCode(ResponseCode.SUCCESS);
+            response.setMessage(messages.get("api.operations.insert.responses.ok"));
+            log.info(response.getMessage());
+            return ResponseEntity.ok(response);
+
         } catch (Exception ex) {
+            log.error("Insert error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Insert error : %s", ex.getLocalizedMessage()));
-            log.error(response.getMessage(), ex);
+            response.setMessage(messages.get("api.operations.insert.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    
+
     /**
      * Read 권한: ADMIN 가능
      */
     @GetMapping
     @PreAuthorize(SecurityExpressions.HAS_ROLE_ADMIN)
     @Operation(
-        summary     = "api.device.selectAll.summary",
-        description = "api.device.selectAll.description"
+        summary     = "{api.operations.select.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.select.description|" + ENTITY_TOKEN + "}"
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.device.selectAll.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "500", description = "api.device.selectAll.responses.error")
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.select.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "500", description = "{api.operations.select.responses.error}")
     })
     public ResponseEntity<?> selectAll() {
-    	
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            List<Device> members = deviceService.selectAll();
-            response.setData(members);
+            List<Device> devices = deviceService.selectAll();
+            response.setData(devices);
             response.setCode(ResponseCode.SUCCESS);
-            response.setMessage(String.format("Select success : %d members", members.size()));
+            response.setMessage(messages.get("api.operations.select.responses.ok"));
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
             log.error("Select all error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Select error : %s", ex.getLocalizedMessage()));
+            response.setMessage(messages.get("api.operations.select.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -128,91 +135,90 @@ public class DeviceController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
     @Operation(
-        summary     = "api.device.selectById.summary",
-        description = "api.device.selectById.description"
+        summary     = "{api.operations.select.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.select.description|" + ENTITY_TOKEN + "}"
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "api.device.selectById.responses.ok",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = CommonResponse.class))),
-        @ApiResponse(responseCode = "400", description = "api.device.selectById.responses.bad_request"),
-        @ApiResponse(responseCode = "404", description = "api.device.selectById.responses.not_found"),
-        @ApiResponse(responseCode = "500", description = "api.device.selectById.responses.error")
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.select.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "404", description = "{api.operations.select.responses.not_found|" + ENTITY_TOKEN + "}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.select.responses.error}")
     })
     public ResponseEntity<?> selectById(@PathVariable String id) {
-    	
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            if (Objects.isNull(id)) {
-                response.setCode(ResponseCode.ERROR);
-                response.setMessage("Select error : id is null");
-                return ResponseEntity.badRequest().body(response);
-            }
-            Device member = deviceService.selectById(id);
-            if (Objects.nonNull(member)) {
-                response.setData(member);
+            Device device = deviceService.selectById(id);
+            if (device != null) {
+                response.setData(device);
                 response.setCode(ResponseCode.SUCCESS);
-                response.setMessage(String.format("Select success : %s", member));
+                response.setMessage(messages.get("api.operations.select.responses.ok"));
                 return ResponseEntity.ok(response);
             } else {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Select error : member not found for id=%d", id));
+                response.setMessage(messages.get("api.operations.select.responses.not_found"));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (Exception ex) {
             log.error("Select by id error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Select error : %s", ex.getLocalizedMessage()));
+            response.setMessage(messages.get("api.operations.select.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    
+
     /**
      * Update 권한: USER, ADMIN만 가능
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
     @Operation(
-	    summary     = "api.device.updateById.summary",
-	    description = "api.device.updateById.description"
-	)
-	@ApiResponses({
-	    @ApiResponse(responseCode = "200", description = "api.device.updateById.responses.ok"),
-	    @ApiResponse(responseCode = "400", description = "api.device.updateById.responses.bad_request"),
-	    @ApiResponse(responseCode = "404", description = "api.device.updateById.responses.not_found"),
-	    @ApiResponse(responseCode = "500", description = "api.device.updateById.responses.error")
-	})
-    public ResponseEntity<?> updateById(@PathVariable String id, @RequestBody CommonRequest <Device> request) {
-
+        summary     = "{api.operations.update.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.update.description|" + ENTITY_TOKEN + "}"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.update.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "{api.operations.update.responses.bad_request}"),
+        @ApiResponse(responseCode = "404", description = "{api.operations.update.responses.not_found|" + ENTITY_TOKEN + "}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.update.responses.error}")
+    })
+    public ResponseEntity<?> updateById(@PathVariable String id, @RequestBody CommonRequest<Device> request) {
         CommonResponse response = CommonResponse.builder().build();
-        
         try {
-            if (Objects.isNull(id) || Objects.isNull(request) || Objects.isNull(request.getData())) {
+            if (id == null || request == null || request.getData() == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage("Update error : invalid id or request");
+                response.setMessage(messages.get("api.operations.update.responses.bad_request"));
                 return ResponseEntity.badRequest().body(response);
             }
             Device found = deviceService.selectById(id);
-            if (Objects.isNull(found)) {
+            if (found == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Update error : no member for id=%d", id));
+                response.setMessage(messages.get("api.operations.update.responses.not_found"));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
             Device candidate = objectMapper.convertValue(request.getData(), Device.class);
             candidate.setId(id);
             deviceService.update(candidate);
+
             response.setData(candidate);
             response.setCode(ResponseCode.SUCCESS);
-            response.setMessage(String.format("Update success : %s", candidate));
+            response.setMessage(messages.get("api.operations.update.responses.ok"));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
         } catch (Exception ex) {
             log.error("Update error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Update error : %s", ex.getLocalizedMessage()));
+            response.setMessage(messages.get("api.operations.update.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -223,39 +229,39 @@ public class DeviceController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.name")
     @Operation(
-	    summary     = "api.device.deleteById.summary",
-	    description = "api.device.deleteById.description"
-	)
-	@ApiResponses({
-	    @ApiResponse(responseCode = "200", description = "api.device.deleteById.responses.ok"),
-	    @ApiResponse(responseCode = "400", description = "api.device.deleteById.responses.bad_request"),
-	    @ApiResponse(responseCode = "404", description = "api.device.deleteById.responses.not_found"),
-	    @ApiResponse(responseCode = "500", description = "api.device.deleteById.responses.error")
-	})
-    public ResponseEntity<CommonResponse> deleteById(@PathVariable String id) {
+        summary     = "{api.operations.delete.summary|" + ENTITY_TOKEN + "}",
+        description = "{api.operations.delete.description|" + ENTITY_TOKEN + "}"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description  = "{api.operations.delete.responses.ok|" + ENTITY_TOKEN + "}",
+            content      = @Content(mediaType = "application/json",
+                                  schema = @Schema(implementation = CommonResponse.class))
+        ),
+        @ApiResponse(responseCode = "404", description = "{api.operations.delete.responses.not_found|" + ENTITY_TOKEN + "}"),
+        @ApiResponse(responseCode = "500", description = "{api.operations.delete.responses.error}")
+    })
+    public ResponseEntity<?> deleteById(@PathVariable String id) {
         CommonResponse response = CommonResponse.builder().build();
         try {
-            if (Objects.isNull(id)) {
-                response.setCode(ResponseCode.ERROR);
-                response.setMessage("Delete error : id is null");
-                return ResponseEntity.badRequest().body(response);
-            }
             Device found = deviceService.selectById(id);
-            if (Objects.isNull(found)) {
+            if (found == null) {
                 response.setCode(ResponseCode.ERROR);
-                response.setMessage(String.format("Delete error : no member for id=%d", id));
+                response.setMessage(messages.get("api.operations.delete.responses.not_found"));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
             deviceService.deleteById(id);
             response.setData(found);
             response.setCode(ResponseCode.SUCCESS);
-            response.setMessage(String.format("Delete success : %s", found));
+            response.setMessage(messages.get("api.operations.delete.responses.ok"));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
+            
         } catch (Exception ex) {
             log.error("Delete error", ex);
             response.setCode(ResponseCode.ERROR);
-            response.setMessage(String.format("Delete error : %s", ex.getLocalizedMessage()));
+            response.setMessage(messages.get("api.operations.delete.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

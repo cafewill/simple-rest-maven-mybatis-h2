@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// CHANGED: Common DTOs import
 import com.cube.simple.dto.DemoRequest;
 import com.cube.simple.dto.DemoResponse;
 import com.cube.simple.enums.ResponseCode;
 import com.cube.simple.model.Demo;
 import com.cube.simple.service.DemoService;
-// ADDED: Messages utility import
-import com.cube.simple.util.Messages;
+import com.cube.simple.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,31 +28,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/demos")
-@Tag(name = "{api.operations.entity.demo}")
+// @Tag(name = "{api.operations.entity.demo}")
 // @Tag(name = "Demos", description = "데모 CRUD API")
 public class DemoController {
 
-    // ADDED: Constants for i18n messages, similar to UsersController
-    private static final String ENTITY_KEY   = "api.operations.entity.demo";
     private static final String ENTITY_TOKEN = "{api.operations.entity.demo}";
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private DemoService demoService;
-    // ADDED: Messages service for i18n
-    @Autowired private Messages messages;
+    @Autowired private MessageUtil messages;
 
     /**
      * Create 권한: ADMIN 만 가능
      */
     @PostMapping
-    // CHANGED: Standardized Swagger annotations
     @Operation(
         summary     = "{api.operations.insert.summary|" + ENTITY_TOKEN + "}",
         description = "{api.operations.insert.description|" + ENTITY_TOKEN + "}",
@@ -70,13 +63,11 @@ public class DemoController {
         @ApiResponse(responseCode = "400", description = "{api.operations.insert.responses.bad_request}"),
         @ApiResponse(responseCode = "500", description = "{api.operations.insert.responses.error}")
     })
-    // CHANGED: Use DemoRequest and DemoResponse
     public ResponseEntity<?> insert(@Valid @RequestBody DemoRequest<Demo> request) {
         DemoResponse response = DemoResponse.builder().build();
         try {
             if (request == null || request.getData() == null) {
                 response.setCode(ResponseCode.ERROR);
-                // CHANGED: Use i18n message
                 response.setMessage(messages.get("api.operations.insert.responses.bad_request"));
                 return ResponseEntity.badRequest().body(response);
             }
@@ -85,15 +76,13 @@ public class DemoController {
 
             response.setData(candidate);
             response.setCode(ResponseCode.SUCCESS);
-            // CHANGED: Use i18n message
-            response.setMessage(messages.get("api.operations.insert.responses.ok", ENTITY_KEY));
+            response.setMessage(messages.get("api.operations.insert.responses.ok"));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
         } catch (Exception ex) {
             log.error("Insert error", ex);
             response.setCode(ResponseCode.ERROR);
-            // CHANGED: Use i18n message
             response.setMessage(messages.get("api.operations.insert.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -103,7 +92,6 @@ public class DemoController {
      * Read 권한: 모두 공개 (인증 없이 접근 가능)
      */
     @GetMapping
-    // CHANGED: Standardized Swagger annotations
     @Operation(
         summary     = "{api.operations.select.summary|" + ENTITY_TOKEN + "}",
         description = "{api.operations.select.description|" + ENTITY_TOKEN + "}"
@@ -123,13 +111,11 @@ public class DemoController {
             List<Demo> list = demoService.selectAll();
             response.setData(list);
             response.setCode(ResponseCode.SUCCESS);
-            // CHANGED: Use i18n message
-            response.setMessage(messages.get("api.operations.select.responses.ok", ENTITY_KEY));
+            response.setMessage(messages.get("api.operations.select.responses.ok"));
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
             log.error("Select all error", ex);
             response.setCode(ResponseCode.ERROR);
-            // CHANGED: Use i18n message
             response.setMessage(messages.get("api.operations.select.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -139,7 +125,6 @@ public class DemoController {
      * Read 권한: 모두 공개 (인증 없이 접근 가능)
      */
     @GetMapping("/{id}")
-    // CHANGED: Standardized Swagger annotations
     @Operation(
         summary     = "{api.operations.select.summary|" + ENTITY_TOKEN + "}",
         description = "{api.operations.select.description|" + ENTITY_TOKEN + "}"
@@ -161,19 +146,16 @@ public class DemoController {
             if (found != null) {
                 response.setData(found);
                 response.setCode(ResponseCode.SUCCESS);
-                // CHANGED: Use i18n message
-                response.setMessage(messages.get("api.operations.select.responses.ok", ENTITY_KEY));
+                response.setMessage(messages.get("api.operations.select.responses.ok"));
                 return ResponseEntity.ok(response);
             } else {
                 response.setCode(ResponseCode.ERROR);
-                // CHANGED: Use i18n message
-                response.setMessage(messages.get("api.operations.select.responses.not_found", ENTITY_KEY));
+                response.setMessage(messages.get("api.operations.select.responses.not_found"));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (Exception ex) {
             log.error("Select by id error", ex);
             response.setCode(ResponseCode.ERROR);
-            // CHANGED: Use i18n message
             response.setMessage(messages.get("api.operations.select.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -183,7 +165,6 @@ public class DemoController {
      * Update 권한: ADMIN 만 가능
      */
     @PutMapping("/{id}")
-    // CHANGED: Standardized Swagger annotations
     @Operation(
         summary     = "{api.operations.update.summary|" + ENTITY_TOKEN + "}",
         description = "{api.operations.update.description|" + ENTITY_TOKEN + "}",
@@ -205,7 +186,6 @@ public class DemoController {
         try {
             if (id == null || request == null || request.getData() == null) {
                 response.setCode(ResponseCode.ERROR);
-                // CHANGED: Use i18n message
                 response.setMessage(messages.get("api.operations.update.responses.bad_request"));
                 return ResponseEntity.badRequest().body(response);
             }
@@ -213,8 +193,7 @@ public class DemoController {
             Demo found = demoService.selectById(id);
             if (found == null) {
                 response.setCode(ResponseCode.ERROR);
-                // CHANGED: Use i18n message
-                response.setMessage(messages.get("api.operations.update.responses.not_found", ENTITY_KEY));
+                response.setMessage(messages.get("api.operations.update.responses.not_found"));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
@@ -224,15 +203,13 @@ public class DemoController {
 
             response.setData(candidate);
             response.setCode(ResponseCode.SUCCESS);
-            // CHANGED: Use i18n message
-            response.setMessage(messages.get("api.operations.update.responses.ok", ENTITY_KEY));
+            response.setMessage(messages.get("api.operations.update.responses.ok"));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
         } catch (Exception ex) {
             log.error("Update error", ex);
             response.setCode(ResponseCode.ERROR);
-            // CHANGED: Use i18n message
             response.setMessage(messages.get("api.operations.update.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -242,7 +219,6 @@ public class DemoController {
      * Delete 권한: ADMIN 만 가능
      */
     @DeleteMapping("/{id}")
-    // CHANGED: Standardized Swagger annotations
     @Operation(
         summary     = "{api.operations.delete.summary|" + ENTITY_TOKEN + "}",
         description = "{api.operations.delete.description|" + ENTITY_TOKEN + "}",
@@ -264,22 +240,19 @@ public class DemoController {
             Demo found = demoService.selectById(id);
             if (found == null) {
                 response.setCode(ResponseCode.ERROR);
-                // CHANGED: Use i18n message
-                response.setMessage(messages.get("api.operations.delete.responses.not_found", ENTITY_KEY));
+                response.setMessage(messages.get("api.operations.delete.responses.not_found"));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
             demoService.deleteById(id);
             response.setData(found);
             response.setCode(ResponseCode.SUCCESS);
-            // CHANGED: Use i18n message
-            response.setMessage(messages.get("api.operations.delete.responses.ok", ENTITY_KEY));
+            response.setMessage(messages.get("api.operations.delete.responses.ok"));
             log.info(response.getMessage());
             return ResponseEntity.ok(response);
 
         } catch (Exception ex) {
             log.error("Delete error", ex);
             response.setCode(ResponseCode.ERROR);
-            // CHANGED: Use i18n message
             response.setMessage(messages.get("api.operations.delete.responses.error"));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

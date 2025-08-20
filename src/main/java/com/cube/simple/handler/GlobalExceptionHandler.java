@@ -4,8 +4,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,29 +21,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.enums.ResponseCode;
+import com.cube.simple.util.MessageUtil;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Value("${common.error.data:false}")
     private boolean showErrorData;
 
-    private final MessageSource messageSource;
-
-    public GlobalExceptionHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    private String getMessage(String code) {
-        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
-    }
-
-    private String getMessage(String code, String defaultMessage) {
-        return messageSource.getMessage(code, null, defaultMessage, LocaleContextHolder.getLocale());
-    }
+    private final MessageUtil messages;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex) {
@@ -56,7 +45,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.INTERNAL_SERVER_ERROR)
-                .message(getMessage("api.response.error", "Server error occurred."))
+                .message(messages.get("api.response.error"))
                 .data(showErrorData ? detail : null)
                 .build();
 
@@ -76,7 +65,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.BAD_REQUEST)
-                .message(getMessage("api.response.bad.request", "Invalid request parameter."))
+                .message(messages.get("api.response.bad.request"))
                 .data(showErrorData ? detail : null)
                 .build();
 
@@ -94,7 +83,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.BAD_REQUEST)
-                .message(getMessage("api.response.bad.request", "Invalid request parameter."))
+                .message(messages.get("api.response.bad.request"))
                 .data(showErrorData ? detail : null)
                 .build();
 
@@ -111,7 +100,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.UNAUTHORIZED)
-                .message(getMessage("api.response.unauthorized", "Authentication failed."))
+                .message(messages.get("api.response.unauthorized"))
                 .data(showErrorData ? detail : null)
                 .build();
 
@@ -128,7 +117,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.FORBIDDEN)
-                .message(getMessage("api.response.forbidden", "Access is denied."))
+                .message(messages.get("api.response.forbidden"))
                 .data(showErrorData ? detail : null)
                 .build();
 
@@ -145,7 +134,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         CommonResponse<String> commonResponse = CommonResponse.<String>builder()
                 .code(ResponseCode.of(statusCode))
-                .message(getMessage("api.response.error", "Server error occurred."))
+                .message(messages.get("api.response.error"))
                 .data(showErrorData ? Objects.toString(detail, "Server error occurred.") : null)
                 .build();
 

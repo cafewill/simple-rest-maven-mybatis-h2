@@ -6,10 +6,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import com.cube.simple.util.JWTUtil;
+import com.cube.simple.util.MessageUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -17,6 +22,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,14 +44,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
 
-    private final MessageSource messageSource;
-
-    public SwaggerConfig(MessageSource messageSource) {
-        // MessageSource 는 반드시 필요하므로 명시적으로 null 체크
-        this.messageSource = Objects.requireNonNull(messageSource);
-    }
+    @Autowired 
+    private MessageUtil messages;
 
     /**
      * OpenAPI 메타 정보 구성 + 전역 JWT 보안 스킴 등록
@@ -58,11 +61,11 @@ public class SwaggerConfig {
         log.info("Check : SwaggerConfig.openAPI(), locale={}", locale);
 
         // i18n 메시지 로드(키가 없으면 NoSuchMessageException 발생)
-        String title       = messageSource.getMessage("swagger.title",          null, locale);
-        String version     = messageSource.getMessage("swagger.version",        null, locale);
-        String description = messageSource.getMessage("swagger.description",    null, locale);
-        String contactName = messageSource.getMessage("swagger.contact.name",   null, locale);
-        String contactUrl  = messageSource.getMessage("swagger.contact.url",    null, locale);
+        String title       = messages.get("swagger.title");
+        String version     = messages.get("swagger.version");
+        String description = messages.get("swagger.description");
+        String contactName = messages.get("swagger.contact.name");
+        String contactUrl  = messages.get("swagger.contact.url");
 
         // 문서 정보 + JWT 보안 스킴 추가
         return new OpenAPI()

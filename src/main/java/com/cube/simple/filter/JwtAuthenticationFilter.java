@@ -4,21 +4,22 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.enums.ResponseCode;
 import com.cube.simple.util.JWTUtil;
+import com.cube.simple.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -41,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper;
-    private final MessageSource messageSource;
+    private final MessageUtil messages;
     
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -64,39 +65,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         List.of(new SimpleGrantedAuthority("ROLE_" + role)));
                 SecurityContextHolder.getContext().setAuthentication(auth);
 	        } catch (ExpiredJwtException ex) {
-	        	/*
-	            // 1) detail 생성
-	            String detail = ex.getLocalizedMessage();
-	
-	            // 2) 로그
-	            log.info("JWT 토큰 만료 : {}", detail);
-	
-	            // 3) CommonResponse 생성
-	            CommonResponse<String> body = CommonResponse.<String>builder()
-	                .code(ResponseCode.UNAUTHORIZED)                     // enum 에 정의된 코드
-	                .message(ResponseCode.UNAUTHORIZED.getMessage())     // “토큰이 만료되었습니다.” 와 같이 세팅
-	                .data(showErrorData ? detail : null)                 // 상세 메시지 노출 여부
-	                .build();
-	
-	            // 4) JSON 응답
-	            writeJsonResponse(response, HttpStatus.UNAUTHORIZED, body);
-	            */
 	            handleJwtException(response, ex, "api.response.jwt.expired", ResponseCode.UNAUTHORIZED.getMessage());
 	            return;
 	
 	        } catch (JwtException ex) {
-	        	/*
-	            String detail = ex.getLocalizedMessage();
-	            log.info("JWT 검증 실패 : {}", detail);
-	
-	            CommonResponse<String> body = CommonResponse.<String>builder()
-	                .code(ResponseCode.UNAUTHORIZED)
-	                .message(ResponseCode.UNAUTHORIZED.getMessage())   // “유효하지 않은 토큰입니다.” 등
-	                .data(showErrorData ? detail : null)
-	                .build();
-	
-	            writeJsonResponse(response, HttpStatus.UNAUTHORIZED, body);
-	            */
 	            handleJwtException(response, ex, "api.response.jwt.invalid", ResponseCode.UNAUTHORIZED.getMessage());
 	            return;
 	        }            
@@ -114,23 +86,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @throws IOException
      */
     private void handleJwtException(HttpServletResponse response, JwtException ex, String messageCode, String defaultMessage) throws IOException {
-        String detail = ex.getLocalizedMessage();
+        
+    	String detail = ex.getLocalizedMessage();
         log.info("JWT Error: {}", detail);
-
-        // Get the localized message from MessageSource
-        String localizedMessage = messageSource.getMessage(
-                messageCode,
-                null, // No arguments for the message
-                defaultMessage, // Default message if key not found
-                LocaleContextHolder.getLocale() // Get locale from the current request context
-        );
 
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.UNAUTHORIZED)
-                .message(localizedMessage) // Use the localized message
+                .message(Optional.ofNullable(messages.get(messageCode)).filter(StringUtils::hasText).orElse(defaultMessage))
                 .data(showErrorData ? detail : null)
                 .build();
-
         writeJsonResponse(response, HttpStatus.UNAUTHORIZED, body);
     }
     

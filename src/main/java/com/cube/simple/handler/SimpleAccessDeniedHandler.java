@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.enums.ResponseCode;
+import com.cube.simple.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +30,7 @@ public class SimpleAccessDeniedHandler implements AccessDeniedHandler {
     private boolean showErrorData;
 
     private final ObjectMapper objectMapper;
-    private final MessageSource messageSource;
+    private final MessageUtil messages;
 
     @Override
     public void handle(HttpServletRequest request,
@@ -40,16 +40,9 @@ public class SimpleAccessDeniedHandler implements AccessDeniedHandler {
     	String detail = String.format ("%s %s", "Forbidden access", Objects.requireNonNullElse(ex.getMessage(), ""));
         log.info(detail);
 
-        String message = messageSource.getMessage(
-            "api.response.forbidden",
-            null,
-            "Access is denied.",
-            LocaleContextHolder.getLocale()
-        );
-
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.FORBIDDEN)
-                .message(message)
+                .message(messages.get("api.response.forbidden"))
                 .data(showErrorData ? detail : null)
                 .build();
 

@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class Messages {
+public class MessageUtil {
+	
     private final MessageSource messageSource;
 
     public String get(String code, Object... args) {

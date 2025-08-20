@@ -5,8 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.cube.simple.dto.CommonResponse;
 import com.cube.simple.enums.ResponseCode;
+import com.cube.simple.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +29,7 @@ public class SimpleAuthenticationEntryPoint implements AuthenticationEntryPoint 
     private boolean showErrorData;
 
     private final ObjectMapper objectMapper;
-    private final MessageSource messageSource;
+    private final MessageUtil messages;
 
     @Override
     public void commence(HttpServletRequest request,
@@ -40,16 +39,9 @@ public class SimpleAuthenticationEntryPoint implements AuthenticationEntryPoint 
     	String detail = String.format ("%s %s", "Unauthorized access", Objects.requireNonNullElse(ex.getMessage(), ""));
         log.info(detail);
 
-        String message = messageSource.getMessage(
-                "api.response.unauthorized",
-                null,
-                "Authentication failed.",
-                LocaleContextHolder.getLocale()
-            );
-
         CommonResponse<String> body = CommonResponse.<String>builder()
                 .code(ResponseCode.UNAUTHORIZED)
-                .message(message)
+                .message(messages.get("api.response.unauthorized"))
                 .data(showErrorData ? detail : null)
                 .build();
 
