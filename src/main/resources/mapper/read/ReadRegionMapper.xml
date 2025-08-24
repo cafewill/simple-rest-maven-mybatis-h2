@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cube.simple.mapper.read.ReadRegionMapper">
+
+    <resultMap id="RegionMap" type="com.cube.simple.model.Region">
+        <id     property="id"          column="id"/>
+        <result property="name"        column="name"/>
+        <result property="createDate"  column="create_date"/>
+        <result property="updateDate"  column="update_date"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="RegionMap">
+        SELECT id, name, create_date, update_date
+        FROM region
+        ORDER BY id DESC
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="RegionMap">
+        SELECT id, name, create_date, update_date
+        FROM region
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectCount" resultType="long">
+        SELECT COUNT(id) AS n
+        FROM region
+    </select>
+
+    <!-- H2 MySQL 모드/운영 MySQL에서 JSON_VALUE 사용 -->
+    <select id="selectByKo" parameterType="string" resultMap="RegionMap">
+        SELECT id, name, create_date, update_date
+        FROM region
+        WHERE JSON_VALUE(name, '$.ko' RETURNING VARCHAR) = #{ko}
+        ORDER BY id DESC
+    </select>
+
+</mapper>

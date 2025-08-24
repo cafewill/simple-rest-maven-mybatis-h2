@@ -19,9 +19,6 @@ public class MemberInitializer {
     @Autowired
     private MemberService memberService;
 
-    @Autowired
-    private DeviceService deviceService;
-
     @PostConstruct
     public void initialize() {
         memberService.insert(Member.builder()
@@ -48,18 +45,5 @@ public class MemberInitializer {
             .phone("010-5678-1234")
             .description("일반 권한 사용자")
             .build());
-
-        deviceService.insert(Device.builder()
-                .id("admin")
-                .token("e0bonP1dTtmBiHfFPg8oHY:APA91bGQBW97r_A7OKTjV9oioPL9vK4yiQCC5b2vdq2ZS8TEbOIes0BE6_PS7TBpYU4EeEzW_TsUp6WDdErFpE4o5U57uvgwtOKL5Jpym6JaL-fwgxkcPS4")
-                .build());
-        deviceService.insert(Device.builder()
-                .id("owner")
-                .token("fT-Y7VYQRwG86djqTPwbhE:APA91bFZu6iiTYOggwXVwL-8ykHx1hsPksah3Qblrn6wUoEEB_z32T6SCI5raq29S02negwJxX-dfOdFlSKeB7Vt2n27rpncYH3uaCDMDBUIUMFx30Hr3gQ")
-                .build());
-        deviceService.insert(Device.builder()
-                .id("user")
-                .token("eCZ7SJP2TUOVz-l5aLglkj:APA91bGcVpakTwP7TtlUcJDQCatCLlTGHgjDD1YYxo8Sd4dGjOIzjdadFak-ZvKZAQWHmcveJRlswYtcqC3BUgxReWnQqXfVvRhtFB9v3deCiKAtTbdzFGw")
-                .build());
     }
 }
