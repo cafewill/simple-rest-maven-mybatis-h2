@@ -111,6 +111,24 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,  "/api/demos/**").hasRole(RoleCode.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE,"/api/demos/**").hasRole(RoleCode.ADMIN.name())
 
+                // 지역 API: USER
+                .requestMatchers(HttpMethod.GET,  "/api/user/places", "/api/user/places/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/user/places").hasRole(RoleCode.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,  "/api/user/places/**").hasRole(RoleCode.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/user/places/**").hasRole(RoleCode.ADMIN.name())
+
+                // 지역 API: OWNER
+                .requestMatchers(HttpMethod.GET,  "/api/owner/places", "/api/owner/places/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/owner/places").hasRole(RoleCode.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,  "/api/owner/places/**").hasRole(RoleCode.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/owner/places/**").hasRole(RoleCode.ADMIN.name())
+
+                // 지역 API: ADMIN
+                .requestMatchers(HttpMethod.GET,  "/api/admin/places", "/api/admin/places/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/admin/places").hasRole(RoleCode.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,  "/api/admin/places/**").hasRole(RoleCode.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/admin/places/**").hasRole(RoleCode.ADMIN.name())
+
                 // 아이템 API: 조회는 USER/ADMIN, 쓰기/수정/삭제는 ADMIN
                 .requestMatchers(HttpMethod.GET,  "/api/items", "/api/items/**").hasAnyRole(RoleCode.USER.name(),RoleCode.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/items").hasRole(RoleCode.ADMIN.name())

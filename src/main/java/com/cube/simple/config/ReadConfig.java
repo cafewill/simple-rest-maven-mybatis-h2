@@ -2,6 +2,7 @@ package com.cube.simple.config;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -65,11 +66,12 @@ public class ReadConfig {
         
         // 도메인 모델의 패키지(별칭 등록)
         sessionFactory.setTypeAliasesPackage("com.cube.simple.model");
-
-        // XML 매퍼 파일 위치 (classpath:mapper/read/*.xml)
+        sessionFactory.setTypeHandlersPackage("com.cube.simple.handler.mybatis");
+        sessionFactory.setDatabaseIdProvider(vendorDatabaseIdProvider());        
+        
         sessionFactory.setMapperLocations(
             new PathMatchingResourcePatternResolver()
-                .getResources("classpath:mapper/read/*.xml")
+                .getResources("classpath:mapper/read/**/*.xml")
         );
 
         return sessionFactory.getObject();
@@ -86,4 +88,14 @@ public class ReadConfig {
 
         return new SqlSessionTemplate(sqlSessionFactory);
     }
+    
+    @Bean(name = "readDatabaseIdProvider")
+    public VendorDatabaseIdProvider vendorDatabaseIdProvider() {
+        var p = new java.util.Properties();
+        p.setProperty("H2", "h2");        // H2
+        p.setProperty("MySQL", "mysql");  // MySQL
+        var v = new org.apache.ibatis.mapping.VendorDatabaseIdProvider();
+        v.setProperties(p);
+        return v;
+    }    
 }

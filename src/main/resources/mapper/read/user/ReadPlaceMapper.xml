@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cube.simple.mapper.read.user.ReadPlaceMapper">
+
+  <!-- MySQL: JSON_UNQUOTE(JSON_EXTRACT) -->
+  <sql id="jsonName">
+    <choose>
+      <when test="lang == 'ko'">JSON_UNQUOTE(JSON_EXTRACT(NAME, '$.ko'))</when>
+      <when test="lang == 'en'">JSON_UNQUOTE(JSON_EXTRACT(NAME, '$.en'))</when>
+      <when test="lang == 'cn'">JSON_UNQUOTE(JSON_EXTRACT(NAME, '$.cn'))</when>
+      <otherwise>JSON_UNQUOTE(JSON_EXTRACT(NAME, '$.ko'))</otherwise>
+    </choose>
+  </sql>
+  <sql id="jsonDescription">
+    <choose>
+      <when test="lang == 'ko'">JSON_UNQUOTE(JSON_EXTRACT(DESCRIPTION, '$.ko'))</when>
+      <when test="lang == 'en'">JSON_UNQUOTE(JSON_EXTRACT(DESCRIPTION, '$.en'))</when>
+      <when test="lang == 'cn'">JSON_UNQUOTE(JSON_EXTRACT(DESCRIPTION, '$.cn'))</when>
+      <otherwise>JSON_UNQUOTE(JSON_EXTRACT(DESCRIPTION, '$.ko'))</otherwise>
+    </choose>
+  </sql>
+
+    <select id="selectAll" resultType="com.cube.simple.model.user.Place">
+        SELECT
+            ID, 
+            <include refid="jsonName"/> AS NAME,
+            <include refid="jsonDescription"/> AS DESCRIPTION,
+            CREATE_DATE, UPDATE_DATE
+        FROM Place
+    </select>
+
+    <select id="selectById" resultType="com.cube.simple.model.user.Place">
+        SELECT
+            ID, 
+            <include refid="jsonName"/> AS NAME,
+            <include refid="jsonDescription"/> AS DESCRIPTION,
+            CREATE_DATE, UPDATE_DATE
+        FROM Place
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectCount" resultType="Long">
+        SELECT
+            COUNT(id) as n 
+        FROM Place
+    </select>
+
+</mapper>

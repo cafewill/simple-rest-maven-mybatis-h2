@@ -5,9 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.cube.simple.enums.RoleCode;
-import com.cube.simple.model.Device;
 import com.cube.simple.model.Member;
-import com.cube.simple.service.DeviceService;
 import com.cube.simple.service.MemberService;
 
 import jakarta.annotation.PostConstruct;
@@ -21,6 +19,7 @@ public class MemberInitializer {
 
     @PostConstruct
     public void initialize() {
+    	
         memberService.insert(Member.builder()
             .role(RoleCode.ADMIN)
             .id("admin")
